@@ -1,0 +1,10 @@
+runtime: python39
+
+vpc_access_connector:
+  name: projects/api-project-992432653598/locations/us-central1/connectors/minair
+
+instance_class: F1
+automatic_scaling:
+  max_idle_instances: 1  # default value
+  min_pending_latency: automatic  # default value
+  max_pending_latency: 30ms
