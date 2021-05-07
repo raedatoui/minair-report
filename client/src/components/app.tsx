@@ -2,6 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { WithStyles, withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
+import Container from '@material-ui/core/Container';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { AppConfiguration, CurrentDataFrame, defaultDataFrame, Song } from '../types';
 import { styles } from '../styles';
@@ -30,6 +31,10 @@ const backgrounds = [
     'burgundy',
     'burgundy'
 ];
+
+const seminairUrl = 'https://storage.googleapis.com/api-project-992432653598.appspot.com/minair-seminair.mp4';
+const seminairUrlBts = 'https://storage.googleapis.com/api-project-992432653598.appspot.com/minair-seminair-bts.mp4';
+const posterUrl = 'https://storage.googleapis.com/api-project-992432653598.appspot.com/video-poster.jpg';
 
 const App: FC<Props> = ({ config, classes }) => {
     const audio = React.useContext(AudioContext);
@@ -133,6 +138,36 @@ const App: FC<Props> = ({ config, classes }) => {
                                     audio={audio}
                                 />
                             </Route>
+                            <Route
+                                path="/minair-seminair"
+                                exact
+                                render={() => {
+                                // @ts-ignore
+                                    gtag('pageview', 'minair-seminair');
+                                    return (
+                                        <Container className={classes.videoContainer}>
+                                            <video preload="none" src={seminairUrl} controls poster={posterUrl}>
+                                                |<track kind="captions" />
+                                            </video>
+                                        </Container>
+                                    );
+                                }}
+                            />
+                            <Route
+                                path="/minair-seminair-bts"
+                                exact
+                                render={() => {
+                                // @ts-ignore
+                                    gtag('pageview', 'minair-seminair-bts');
+                                    return (
+                                        <Container className={classes.videoContainer}>
+                                            <video preload="none" src={seminairUrlBts} controls poster={posterUrl}>
+                                                |<track kind="captions" />
+                                            </video>
+                                        </Container>
+                                    );
+                                }}
+                            />
                         </Switch>
                         <ScrollToTop useWhite={useWhite} />
                     </div>
