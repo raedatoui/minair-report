@@ -457,6 +457,13 @@ export const styles = (theme: Theme) => createStyles({
             color: 'black',
 
         }
+    },
+
+    videoContainer: {
+        maxWidth: '1280px',
+        '& video': {
+            width: '100%'
+        }
     }
 
 });
