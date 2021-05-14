@@ -26,6 +26,7 @@ def responsify_and_flaskify_success(message):
 @app.route('/songs')
 @app.route('/minair-seminair')
 @app.route('/minair-seminair-bts')
+@app.route('/donations')
 def index():
     return render_template('index.html')
 

@@ -63,10 +63,11 @@ const getModalStyle = () => {
 };
 
 interface Props extends RouteComponentProps, ComponentProps {
-    setShowHeader: (s: boolean) => void
+    setShowHeader: (s: boolean) => void,
+    play: () => void,
 }
 
-const Fiction:FC<Props> = ({ setShowHeader, useWhite, serverUrl, classes }) => {
+const Fiction:FC<Props> = ({ setShowHeader, useWhite, serverUrl, play, classes }) => {
     const [fiction, setFiction] = useState<FictionType[]>([]);
     const [open, setOpen] = React.useState(true);
     const [modalStyle] = React.useState(getModalStyle);
@@ -78,6 +79,7 @@ const Fiction:FC<Props> = ({ setShowHeader, useWhite, serverUrl, classes }) => {
     const navigate = () => {
         setShowHeader(false);
         setOpen(false);
+        play();
         // history.push(url);
         // @ts-ignore
         gtag('event', 'not18');

@@ -7,7 +7,6 @@ import { styles } from '../styles';
 
 const ScrollToTop:FC<StyledComponent> = ({ classes }) => {
     const [isVisible, setIsVisible] = useState(false);
-
     // Show button when page is scrolled upto given distance
     const toggleVisibility = () => {
         if (window.pageYOffset > 300)

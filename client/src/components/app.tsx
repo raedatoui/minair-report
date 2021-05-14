@@ -17,6 +17,7 @@ import Fiction from './fiction';
 import Songs from './songs';
 import Glitch from './glitch';
 import Footer from './footer';
+import Donate from './donate';
 
 interface Props extends WithStyles<typeof styles> {
     config: AppConfiguration;
@@ -32,9 +33,9 @@ const backgrounds = [
     'burgundy'
 ];
 
-const seminairUrl = 'https://storage.googleapis.com/api-project-992432653598.appspot.com/minair-seminair.mp4';
-const seminairUrlBts = 'https://storage.googleapis.com/api-project-992432653598.appspot.com/minair-seminair-bts.mp4';
-const posterUrl = 'https://storage.googleapis.com/api-project-992432653598.appspot.com/video-poster.jpg';
+const seminairUrl = `${CDN}/minair-seminair.mp4`;
+const seminairUrlBts = `${CDN}/minair-seminair-bts.mp4`;
+const posterUrl = `${CDN}/video-poster.jpg`;
 
 const App: FC<Props> = ({ config, classes }) => {
     const audio = React.useContext(AudioContext);
@@ -58,6 +59,15 @@ const App: FC<Props> = ({ config, classes }) => {
             audio.play();
         },
         [audio, songs]
+    );
+
+    const playUnderage = React.useCallback(
+        () => {
+            audio.src = `${CDN}/audio/underage.wav`;
+            audio.loop = true;
+            audio.play();
+        },
+        [audio]
     );
 
     useEffect(() => {
@@ -123,7 +133,12 @@ const App: FC<Props> = ({ config, classes }) => {
                             </Route>
                             <Route path="/charts" exact />
                             <Route path="/fiction" exact>
-                                <Fiction serverUrl={config.serverUrl} useWhite={useWhite} setShowHeader={setShowHeader} />
+                                <Fiction
+                                    serverUrl={config.serverUrl}
+                                    useWhite={useWhite}
+                                    setShowHeader={setShowHeader}
+                                    play={playUnderage}
+                                />
                             </Route>
                             <Route path="/trends" exact>
                                 <Charts currentDataFrame={dataFrame || defaultDataFrame} serverUrl={config.serverUrl} useWhite={useWhite} />
@@ -168,6 +183,12 @@ const App: FC<Props> = ({ config, classes }) => {
                                     );
                                 }}
                             />
+                            <Route
+                                path="/donations"
+                                exact
+                            >
+                                <Donate useWhite={useWhite} />
+                            </Route>
                         </Switch>
                         <ScrollToTop useWhite={useWhite} />
                     </div>
@@ -178,5 +199,4 @@ const App: FC<Props> = ({ config, classes }) => {
         </>
     );
 };
-
 export default withStyles(styles)(App);
