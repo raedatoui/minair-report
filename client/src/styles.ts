@@ -215,6 +215,13 @@ export const styles = (theme: Theme) => createStyles({
             gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr 1fr'
         }
     },
+    menu2: {
+        width: '100%',
+        backgroundColor: 'rgba(0,0,0,0)',
+        height: 'inherit',
+        display: 'flex',
+        alignItems: 'center'
+    },
     menuItem: {
         flex: '0 32%',
         margin: 'auto'
@@ -231,7 +238,6 @@ export const styles = (theme: Theme) => createStyles({
             height: theme.spacing(18),
         }
     },
-
     fanCardContainer: {
         display: 'flex',
         flexWrap: 'wrap',
@@ -329,9 +335,7 @@ export const styles = (theme: Theme) => createStyles({
     modal: {
         position: 'absolute',
         width: '100%',
-        heigh: '100%',
         color: 'white',
-        backgroundColor: 'none',
         border: 'none',
         boxShadow: 'none',
         padding: theme.spacing(2, 4, 3),
@@ -460,12 +464,42 @@ export const styles = (theme: Theme) => createStyles({
     },
 
     videoContainer: {
+        marginTop: containerPadding,
         maxWidth: '1280px',
         '& video': {
             width: '100%'
         }
-    }
+    },
+    donateIconPlace: {
+        opacity: 0,
+        '&.visible': {
+            opacity: 1,
+        }
+    },
+    donateIcon: {
+        zIndex: 1101,
+        position: 'absolute',
+        '&.visible': {
+            display: 'none',
+        }
+    },
 
+    donateText: {
+        marginTop: containerPadding,
+        marginBottom: containerPadding,
+        fontFamily: 'Barlow Condensed, sans-serif',
+        fontWeight: 700,
+        padding: '0 1rem',
+        fontSize: '3rem',
+        fontStyle: 'italic',
+        textShadow: 'rgb(0 255 255) -2px 0px 0px, rgb(255 0 255) 2px 0px 0px',
+        color: 'black',
+        textAlign: 'center',
+        letterSpacing: '0.2rem',
+        '&.small': {
+            fontSize: '2rem'
+        }
+    }
 });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

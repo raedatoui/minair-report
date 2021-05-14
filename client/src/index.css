@@ -35,3 +35,11 @@ p {
     flex: 1;
     padding-bottom: 65px;
 }
+
+div[role=presentation] {
+    background-color: rgba(170, 68, 170, 0.8);
+}
+
+div[role=presentation].MuiPopover-root {
+    background-color: rgba(0,0,0,0);
+}

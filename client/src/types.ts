@@ -137,3 +137,8 @@ export interface Song {
     trackNumber: number,
     icon: string,
 }
+
+export type Rect = {
+    x: number;
+    y: number;
+};

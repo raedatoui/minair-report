@@ -3,6 +3,7 @@ import { fetchData } from './fetch-data';
 import { useInterval } from './user-interval';
 import { makeAudio, AudioContext } from './audio-context';
 import { debounce } from './debounce';
+import { useBbox } from './rect';
 
 const timestampToDate = (f:string, x:number): string => {
     const offset = new Date().getTimezoneOffset() * 60000;
@@ -15,5 +16,6 @@ export {
     timestampToDate,
     makeAudio,
     AudioContext,
-    debounce
+    debounce,
+    useBbox
 };
