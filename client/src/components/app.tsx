@@ -2,22 +2,22 @@ import React, { FC, useEffect, useState } from 'react';
 import { WithStyles, withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Container from '@material-ui/core/Container';
-import { Route, Switch, Redirect } from 'react-router-dom';
-import { AppConfiguration, CurrentDataFrame, defaultDataFrame, Song } from '../types';
+import { Route, Switch, Redirect, RouteComponentProps } from 'react-router-dom';
+import { AppConfiguration, CurrentDataFrame, defaultDataFrame, Song, Video } from '../types';
 import { styles } from '../styles';
-import { audio as audioPath, CDN, logo } from '../constants';
+import { audio as audioPath, CDN, logo, videos as videosPath } from '../constants';
 import { useInterval, fetchData, AudioContext } from '../utils';
 import ScrollToTop from './scrollToTop';
 import Current from './current';
 import Fans from './fans';
 import Menu from './menu';
-import Charts from './charts';
+import Trends from './trends';
 import Fiction from './fiction';
 import Songs from './songs';
 import Glitch from './glitch';
 import Footer from './footer';
 import Donate from './donate';
+import VideoPage from './video';
 
 interface Props extends WithStyles<typeof styles> {
     config: AppConfiguration;
@@ -33,9 +33,33 @@ const backgrounds = [
     'burgundy'
 ];
 
-const seminairUrl = `${CDN}/minair-seminair.mp4`;
-const seminairUrlBts = `${CDN}/minair-seminair-bts.mp4`;
-const posterUrl = `${CDN}/video-poster.jpg`;
+const videoList: Record<string, Video> = [
+    {
+        title: 'Minair Seminair',
+        video: 'minair-seminair.mp4',
+        poster: 'light-poster.jpg',
+        path: 'minair-seminair'
+    },
+    {
+        title: 'Minair Seminair BTS',
+        video: 'minair-seminair-bts.mp4',
+        poster: 'light-poster.jpg',
+        path: 'minair-seminair-bts'
+    },
+    {
+        title: 'Sal Blows 4 Minair',
+        video: 'sal-blows.mp4',
+        poster: 'dark-poster.jpg',
+        path: 'sal-blows-4-minair'
+    }
+].reduce((acc, v) => ({
+    ...acc,
+    [v.path]: {
+        ...v,
+        video: `${CDN}${videosPath}${v.video}`,
+        poster: `${CDN}${videosPath}${v.poster}`
+    }
+}), {});
 
 const App: FC<Props> = ({ config, classes }) => {
     const audio = React.useContext(AudioContext);
@@ -88,6 +112,7 @@ const App: FC<Props> = ({ config, classes }) => {
                 filename: `${CDN}${audioPath}${s.filename}`
             })));
         };
+
         getSensorData();
         getSongs();
 
@@ -120,29 +145,54 @@ const App: FC<Props> = ({ config, classes }) => {
                             </Toolbar>
                         </AppBar>
 
-                        <Menu useWhite={useWhite} play={play} currentIndex={currentIndex} songs={songs} />
+                        <Menu
+                            useWhite={useWhite}
+                            play={play}
+                            classes={classes}
+                            currentIndex={currentIndex}
+                            songs={songs}
+                        />
+
                         <Switch>
                             <Route path="/" exact>
                                 <Redirect to="/current" />
                             </Route>
+
                             <Route path="/current" exact>
-                                <Current dataFrame={dataFrame} useWhite={useWhite} />
+                                <Current
+                                    dataFrame={dataFrame}
+                                    useWhite={useWhite}
+                                    classes={classes}
+                                />
                             </Route>
+
                             <Route path="/fans" exact>
-                                <Fans serverUrl={config.serverUrl} useWhite={useWhite} />
+                                <Fans
+                                    serverUrl={config.serverUrl}
+                                    useWhite={useWhite}
+                                    classes={classes}
+                                />
                             </Route>
-                            <Route path="/charts" exact />
+
                             <Route path="/fiction" exact>
                                 <Fiction
                                     serverUrl={config.serverUrl}
                                     useWhite={useWhite}
                                     setShowHeader={setShowHeader}
                                     play={playUnderage}
+                                    classes={classes}
                                 />
                             </Route>
+
                             <Route path="/trends" exact>
-                                <Charts currentDataFrame={dataFrame || defaultDataFrame} serverUrl={config.serverUrl} useWhite={useWhite} />
+                                <Trends
+                                    currentDataFrame={dataFrame || defaultDataFrame}
+                                    serverUrl={config.serverUrl}
+                                    classes={classes}
+                                    useWhite={useWhite}
+                                />
                             </Route>
+
                             <Route path="/songs" exact>
                                 <Songs
                                     songs={songs}
@@ -153,49 +203,28 @@ const App: FC<Props> = ({ config, classes }) => {
                                     audio={audio}
                                 />
                             </Route>
-                            <Route
-                                path="/minair-seminair"
-                                exact
-                                render={() => {
-                                // @ts-ignore
-                                    gtag('pageview', 'minair-seminair');
-                                    return (
-                                        <Container className={classes.videoContainer}>
-                                            <video preload="none" src={seminairUrl} controls poster={posterUrl}>
-                                                |<track kind="captions" />
-                                            </video>
-                                        </Container>
-                                    );
-                                }}
-                            />
-                            <Route
-                                path="/minair-seminair-bts"
-                                exact
-                                render={() => {
-                                // @ts-ignore
-                                    gtag('pageview', 'minair-seminair-bts');
-                                    return (
-                                        <Container className={classes.videoContainer}>
-                                            <video preload="none" src={seminairUrlBts} controls poster={posterUrl}>
-                                                |<track kind="captions" />
-                                            </video>
-                                        </Container>
-                                    );
-                                }}
-                            />
-                            <Route
-                                path="/donations"
-                                exact
-                            >
-                                <Donate useWhite={useWhite} />
+
+                            <Route path="/donations" exact>
+                                <Donate useWhite={useWhite} classes={classes} />
                             </Route>
+
+                            <Route
+                                path="/:id"
+                                exact
+                                render={(props:RouteComponentProps) => {
+                                    // @ts-ignore
+                                    const { id } = props.match.params;
+                                    const video = videoList[id];
+                                    return <VideoPage video={video} useWhite={useWhite} classes={classes} />;
+                                }}
+                            />
                         </Switch>
                         <ScrollToTop useWhite={useWhite} />
                     </div>
-                    <Footer useWhite={useWhite} />
+                    <Footer useWhite={useWhite} classes={classes} />
                 </>
             ) }
-            { !showHeader && <Glitch useWhite={useWhite} /> }
+            { !showHeader && <Glitch /> }
         </>
     );
 };

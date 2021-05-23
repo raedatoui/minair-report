@@ -5,6 +5,7 @@ from datetime import datetime
 
 from sqlalchemy import Column, Integer, Float, DateTime, String, JSON
 from sqlalchemy.orm import load_only, defer
+from sqlalchemy.sql import func
 
 from sensor.connectors import mysql
 
@@ -153,3 +154,25 @@ def get_trends(count):
         items = [row.to_dict(False, False) for row in rows]
         items.reverse()
         return {'items': items}
+
+
+def get_top(param, count):
+    with mysql.purp_db_session() as session:
+        query = session.query(Measurement).order_by(Measurement.__table__.c.id.desc())
+
+
+def get_by_date(day):
+    with mysql.purp_db_session() as session:
+        select_params = {
+            'day': day
+        }
+        sql_query = """
+        SELECT *
+        FROM measurement 
+        WHERE timestamp >= UNIX_TIMESTAMP(:day) AND timestamp < (UNIX_TIMESTAMP(:day) + 60*60*24)
+        ORDER BY timestamp ASC;
+        """
+        rows = session.execute(
+            sql_query,
+            select_params).fetchall()
+        return {'items':  [Measurement(**dict(row)).to_dict(False, False) for row in rows]}

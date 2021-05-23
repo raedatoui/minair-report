@@ -1,10 +1,8 @@
 import React, { FC } from 'react';
 import clsx from 'clsx';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import { withStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import { StyledComponent } from '../../types';
-import { styles } from '../../styles';
 
 const Donate: FC<StyledComponent> = ({ classes }) => {
     const matches = useMediaQuery('(max-width:960px)');
@@ -19,4 +17,4 @@ const Donate: FC<StyledComponent> = ({ classes }) => {
     );
 };
 
-export default withStyles(styles)(Donate);
+export default Donate;

@@ -1,11 +1,9 @@
 import React, { FC } from 'react';
-import { withStyles } from '@material-ui/core/styles';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Button from '@material-ui/core/Button';
 import Link from '@material-ui/core/Link';
 import Paper from '@material-ui/core/Paper';
 import { StyledComponent } from '../../types';
-import { styles } from '../../styles';
 
 const Footer:FC<StyledComponent> = ({ classes }) => (
     <Paper elevation={3} className={classes.footer}>
@@ -24,4 +22,4 @@ const Footer:FC<StyledComponent> = ({ classes }) => (
 
 );
 
-export default withStyles(styles)(Footer);
+export default Footer;

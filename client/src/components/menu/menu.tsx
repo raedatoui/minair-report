@@ -3,10 +3,8 @@ import clsx from 'clsx';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
-import { withStyles } from '@material-ui/core/styles';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
-import { styles } from '../../styles';
 import { CDN, audio as audioPath, menu as menuPath } from '../../constants';
 import { StyledComponent, Song } from '../../types';
 import { makeAudio } from '../../utils';
@@ -184,4 +182,4 @@ const Menu: FC<Props> = ({ currentIndex, play, songs, history, classes }) => {
     );
 };
 
-export default withRouter(withStyles(styles)(Menu));
+export default withRouter(Menu);

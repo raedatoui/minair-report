@@ -1,16 +1,10 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC } from 'react';
 import Highcharts, { Options, SeriesSplineOptions, XAxisOptions, YAxisOptions } from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
-import { withStyles } from '@material-ui/core/styles';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
-import SvgIcon from '@material-ui/core/SvgIcon';
 import { cloneDeep } from 'lodash';
-import { styles, lightGreen, yellow, orange, red, burgundy, purple } from '../../styles';
-import { DataFrame, ComponentProps, chartCategories, ChartData } from '../../types';
-import { fetchData, timestampToDate } from '../../utils';
+import { lightGreen, yellow, orange, red, burgundy, purple } from '../../styles';
+import { chartCategories } from '../../types';
+import { timestampToDate } from '../../utils';
 
 const offset = new Date().getTimezoneOffset() * 60000;
 
@@ -21,28 +15,10 @@ function formatter() {
     return `${ts}<br />● ${this.points[0].series.name}: ${this.y}`;
 }
 
-const timeLabels = [
-    '1 hr',
-    '2 hrs',
-    '4 hrs',
-    '24 hrs',
-    '3 days',
-    '1 week'
-];
-
-const timeValues = [
-    30,
-    60,
-    120,
-    720,
-    2160,
-    5040
-];
-
-interface TimeFormatter {
+type TimeFormatter = {
     interval: number,
     formatter: ({ value }: { value: string }) => string
-}
+};
 
 const timeFormatters: Record<string, TimeFormatter> = {
     '1 hr': {
@@ -123,12 +99,6 @@ const options: Options = {
     }
 };
 
-const newIcon = () => (
-    <SvgIcon focusable="true">
-        <path d="M7 10l5 5 5-5z" fill="white" />
-    </SvgIcon>
-);
-
 const aqiPlotBands = [
     {
         from: 0,
@@ -207,58 +177,15 @@ const aqiPlotBands = [
     }
 ];
 
-interface Props extends ComponentProps {
-    currentDataFrame: DataFrame
+interface Props {
+    useWhite: boolean;
+    timeRange: string;
+    series: Record<keyof typeof chartCategories, SeriesSplineOptions>;
+    metric: keyof typeof chartCategories;
+    xCats: string[];
 }
 
-const Charts:FC<Props> = ({ currentDataFrame, useWhite, serverUrl, classes }) => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const param = urlParams.get('param') || 'aqi25';
-
-    const [series, setSeries] = useState<Record<keyof typeof chartCategories, SeriesSplineOptions>>({});
-    const [xCats, setXCats] = useState<string[]>([]);
-    const [metric, setMetric] = useState<keyof typeof chartCategories>(param);
-    const [timeRange, setTimeRange] = useState<string>('1 hr');
-
-    useEffect(() => {
-
-        setXCats(olderXCats => ([
-            ...olderXCats,
-            currentDataFrame.timestamp.toString()
-        ]));
-
-        setSeries(oldSeries => (
-            Object.keys(chartCategories).reduce((acc, k) => ({
-                ...acc,
-                [k]: {
-                    ...oldSeries[k],
-                    data: [
-                        ...oldSeries[k]?.data || [],
-                        currentDataFrame?.[k as keyof DataFrame]
-                    ]
-                }
-            }), {})
-        ));
-
-    }, [currentDataFrame]);
-
-    useEffect(() => {
-        const getSensorData = async () => {
-            const tr = timeValues[timeLabels.indexOf(timeRange)];
-            const chartData = await fetchData<ChartData>(`${serverUrl}/api/trends?count=${tr}`);
-            const df = chartData.items;
-            setSeries(Object.keys(chartCategories).reduce((acc, k) => ({
-                ...acc,
-                [k]: {
-                    name: chartCategories[k],
-                    // @ts-ignore
-                    data: df.map(d => d[k])
-                }
-            }), {}));
-            setXCats(df.map(d => d.timestamp.toString()));
-        };
-        getSensorData();
-    }, [serverUrl, timeRange]);
+export const Graph: FC<Props> = ({ useWhite, metric, timeRange, series, xCats }) => {
 
     const plotBands = aqiPlotBands.map(p => ({
         ...p,
@@ -298,44 +225,14 @@ const Charts:FC<Props> = ({ currentDataFrame, useWhite, serverUrl, classes }) =>
     } as YAxisOptions;
 
     return (
-        <div className={classes.chartsContainer}>
-            <FormControl variant="filled" className={classes.formControl}>
-                <InputLabel className={classes.chartSelector}>Chart</InputLabel>
-                <Select
-                    value={metric}
-                    className={classes.chartSelector}
-                    IconComponent={newIcon}
-                    onChange={({ target: { value } }) => setMetric(value as keyof typeof chartCategories)}
-                >
-                    {Object.entries(chartCategories).map(([k, v]) => (
-                        <MenuItem key={k} value={k}>{v}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
-            <FormControl variant="filled" className={classes.formControl}>
-                <InputLabel className={classes.chartSelector}>Time range</InputLabel>
-                <Select
-                    value={timeRange}
-                    className={classes.chartSelector}
-                    IconComponent={newIcon}
-                    onChange={({ target: { value } }) => setTimeRange(value as string)}
-                >
-                    {timeLabels.map(t => (
-                        <MenuItem key={t} value={t}>{t}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
-            <HighchartsReact
-                highcharts={Highcharts}
-                options={{
-                    ...options,
-                    xAxis: xAxisOptions,
-                    yAxis: yAxisOptions,
-                    series: cloneDeep(series?.[metric])
-                }}
-            />
-        </div>
+        <HighchartsReact
+            highcharts={Highcharts}
+            options={{
+                ...options,
+                xAxis: xAxisOptions,
+                yAxis: yAxisOptions,
+                series: cloneDeep(series?.[metric])
+            }}
+        />
     );
 };
-
-export default withStyles(styles)(Charts);

@@ -26,14 +26,16 @@ def responsify_and_flaskify_success(message):
 @app.route('/songs')
 @app.route('/minair-seminair')
 @app.route('/minair-seminair-bts')
+@app.route('/sal-blows-4-minair')
 @app.route('/donations')
+@app.route('/all-time-high')
 def index():
     return render_template('index.html')
 
 
-@app.route('/media/<path:path>')
-def send_static_file(path):
-    return send_from_directory('static', 'media/{}'.format(path))
+@app.route('/manifest.json')
+def send_static_file():
+    return send_from_directory('static', 'manifest.json')
 
 
 @app.route('/favicon.ico')
@@ -53,18 +55,7 @@ def health():
     return jsonify({'status': 'ok'})
 
 
-@app.route('/api/current')
-def current_data():
-    df = sensor.load_current2()
-    return responsify_and_flaskify_success(df)
-
-
-@app.route('/api/save')
-def save_data():
-    df = sensor.save_measurement()
-    return responsify_and_flaskify_success(df)
-
-
+# content
 @app.route('/api/fiction')
 def get_fiction():
     return responsify_and_flaskify_success(fans.get_fiction())
@@ -84,6 +75,36 @@ def get_hour():
 @app.route('/api/songs')
 def get_songs():
     return responsify_and_flaskify_success(fans.get_songs())
+
+
+@app.route('/api/videos')
+def get_videos():
+    return responsify_and_flaskify_success(fans.get_videos())
+
+
+# sensor
+@app.route('/api/current')
+def current_data():
+    df = sensor.load_current2()
+    return responsify_and_flaskify_success(df)
+
+
+@app.route('/api/save')
+def save_data():
+    df = sensor.save_measurement()
+    return responsify_and_flaskify_success(df)
+
+
+@app.route('/api/day')
+def get_by_day():
+    day = request.args.get('day')
+    return responsify_and_flaskify_success(sensor.get_day(day))
+
+
+@app.route('/api/high')
+def get_all_high():
+    param = request.args.getlist('param')
+    return responsify_and_flaskify_success(sensor.get_top(param, 20))
 
 
 @app.errorhandler(Exception)

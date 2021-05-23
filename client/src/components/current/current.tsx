@@ -5,10 +5,8 @@ import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import { withStyles } from '@material-ui/core/styles';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { AverageLabels, CurrentDataFrame, statLabels, StyledComponent } from '../../types';
-import { styles } from '../../styles';
 import { timestampToDate } from '../../utils';
 
 const getAverageLabel = (l: string) => {
@@ -216,4 +214,4 @@ const Current: FC<Props> = ({ history, useWhite, dataFrame, classes }) => {
     );
 };
 
-export default withRouter(withStyles(styles)(Current));
+export default withRouter(Current);
