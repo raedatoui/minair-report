@@ -5,9 +5,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Box from '@material-ui/core/Box';
-import { DataFrame, ComponentProps, chartCategories, ChartData } from '../../types';
+import { DataFrame, ComponentProps, chartCategories } from '../../types';
 import { fetchData } from '../../utils';
-import { DatePicker } from './date-picker';
+import DatePicker from './date-picker';
 import { Graph } from './graph';
 
 const timeLabels = [
@@ -37,9 +37,11 @@ const Charts:FC<Props> = ({ currentDataFrame, useWhite, serverUrl, classes }) =>
     const param = urlParams.get('param') || 'aqi25';
 
     const [metric, setMetric] = useState<keyof typeof chartCategories>(param);
-    const [timeRange, setTimeRange] = useState<string>('1 hr');
     const [series, setSeries] = useState<Record<keyof typeof chartCategories, SeriesSplineOptions>>({});
     const [xCats, setXCats] = useState<string[]>([]);
+
+    const [timeRange, setTimeRange] = useState<string>('1 hr');
+    const [selectedDate, setSelectedDate] = useState<string | null>();
 
     useEffect(() => {
         setXCats(olderXCats => ([
@@ -62,23 +64,31 @@ const Charts:FC<Props> = ({ currentDataFrame, useWhite, serverUrl, classes }) =>
 
     }, [currentDataFrame]);
 
+    const getSensorData = async (path: string) => {
+        const chartData = await fetchData<DataFrame[]>(path);
+        setSeries(Object.keys(chartCategories).reduce((acc, k) => ({
+            ...acc,
+            [k]: {
+                name: chartCategories[k],
+                // @ts-ignore
+                data: chartData.map(d => d[k])
+            }
+        }), {}));
+        setXCats(chartData.map(d => d.timestamp.toString()));
+    };
+
     useEffect(() => {
-        const getSensorData = async () => {
-            const tr = timeValues[timeLabels.indexOf(timeRange)];
-            const chartData = await fetchData<ChartData>(`${serverUrl}/api/trends?count=${tr}`);
-            const df = chartData.items;
-            setSeries(Object.keys(chartCategories).reduce((acc, k) => ({
-                ...acc,
-                [k]: {
-                    name: chartCategories[k],
-                    // @ts-ignore
-                    data: df.map(d => d[k])
-                }
-            }), {}));
-            setXCats(df.map(d => d.timestamp.toString()));
-        };
-        getSensorData();
+        const tr = timeValues[timeLabels.indexOf(timeRange)];
+        const path = `${serverUrl}/api/trends?count=${tr}`;
+        getSensorData(path);
     }, [serverUrl, timeRange]);
+
+    useEffect(() => {
+        if (selectedDate) {
+            const path = `${serverUrl}/api/day?day=${selectedDate}`;
+            getSensorData(path);
+        }
+    }, [serverUrl, selectedDate]);
 
     return (
         <div className={classes.chartsContainer}>
@@ -96,7 +106,7 @@ const Charts:FC<Props> = ({ currentDataFrame, useWhite, serverUrl, classes }) =>
                     </Select>
                 </FormControl>
                 <FormControl variant="filled" className={classes.formControl}>
-                    <DatePicker classes={classes} useWhite={useWhite} />
+                    <DatePicker classes={classes} useWhite={useWhite} setDate={setSelectedDate} />
                 </FormControl>
                 <FormControl variant="filled" className={classes.formControl}>
                     <InputLabel className={classes.chartSelector}>Time range</InputLabel>

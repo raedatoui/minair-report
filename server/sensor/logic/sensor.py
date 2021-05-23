@@ -94,7 +94,6 @@ def api_pm_10(conc):
 
     return aqi
 
-
 def aqi_cat(aqi):
     if aqi <= 50:
         aqi_category = "Good"
@@ -179,6 +178,5 @@ def get_trends(count):
 def get_top(param, count):
     return sensor_point.get_top(param, count)
 
-
-def get_video():
-    return sensor
+def get_day(day):
+    return sensor_point.get_by_date(day)
