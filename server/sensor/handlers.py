@@ -32,10 +32,13 @@ def responsify_and_flaskify_success(message):
 def index():
     return render_template('index.html')
 
-
 @app.route('/manifest.json')
-def send_static_file():
+def send_manifest_file():
     return send_from_directory('static', 'manifest.json')
+
+@app.route('/media/<path:path>')
+def send_static_file(path):
+    return send_from_directory('static', 'media/{}'.format(path))
 
 
 @app.route('/favicon.ico')
@@ -103,7 +106,7 @@ def get_by_day():
 
 @app.route('/api/high')
 def get_all_high():
-    param = request.args.getlist('param')
+    param = request.args.get('param')
     return responsify_and_flaskify_success(sensor.get_top(param, 20))
 
 

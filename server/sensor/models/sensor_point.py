@@ -153,13 +153,19 @@ def get_trends(count):
         rows = query.all()
         items = [row.to_dict(False, False) for row in rows]
         items.reverse()
-        return {'items': items}
+        return items
 
 
 def get_top(param, count):
     with mysql.purp_db_session() as session:
-        query = session.query(Measurement).order_by(Measurement.__table__.c.id.desc())
-
+        print(param)
+        sort_field = Measurement.__table__.c.get(param)
+        print(sort_field)
+        query = session.query(Measurement).order_by(sort_field.desc())
+        query = query.limit(count)
+        rows = query.all()
+        items = [row.to_dict(False, False) for row in rows]
+        return items
 
 def get_by_date(day):
     with mysql.purp_db_session() as session:
@@ -175,4 +181,4 @@ def get_by_date(day):
         rows = session.execute(
             sql_query,
             select_params).fetchall()
-        return {'items':  [Measurement(**dict(row)).to_dict(False, False) for row in rows]}
+        return [Measurement(**dict(row)).to_dict(False, False) for row in rows]
