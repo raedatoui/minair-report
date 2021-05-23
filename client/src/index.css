@@ -36,7 +36,7 @@ p {
     padding-bottom: 65px;
 }
 
-div[role=presentation] {
+#fiction-modal {
     background-color: rgba(170, 68, 170, 0.8);
 }
 

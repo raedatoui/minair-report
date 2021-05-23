@@ -322,13 +322,41 @@ export const styles = (theme: Theme) => createStyles({
         color: 'white',
         minWidth: 120,
         '&.MuiFilledInput-root': {
-            background: purpleAirTransparent
+            background: purpleAirTransparent,
+            '& .MuiButtonBase-root': {
+                '& .MuiIconButton-label': {
+                    color: 'rgba(255,255,255,0.74)'
+                }
+            }
         },
         '&.MuiFormLabel-root.Mui-focused': {
             color: 'white'
         },
         '.MuiSelect-iconFilled': {
             color: 'white'
+        }
+    },
+    datePicker: {
+        margin: 0,
+        '& .MuiInputLabel-root': {
+            color: 'white'
+        },
+        '& .MuiFilledInput-root': {
+            color: 'white',
+            '&.MuiFilledInput-root': {
+                background: purpleAirTransparent
+            },
+            '&.MuiFormLabel-root.Mui-focused': {
+                color: 'white'
+            },
+            '.MuiSelect-iconFilled': {
+                color: 'white'
+            },
+            '& .MuiButtonBase-root': {
+                '& .MuiIconButton-label': {
+                    color: 'rgba(255,255,255,0.74)'
+                }
+            }
         }
     },
 
@@ -468,6 +496,19 @@ export const styles = (theme: Theme) => createStyles({
         maxWidth: '1280px',
         '& video': {
             width: '100%'
+        }
+    },
+    videoTitle: {
+        fontFamily: 'Barlow Condensed, sans-serif',
+        fontWeight: 700,
+        fontStyle: 'italic',
+        textAlign: 'center',
+        textShadow: 'rgb(0 255 255) -2px 0px 0px, rgb(255 0 255) 2px 0px 0px',
+        margin: '1rem 0',
+        fontSize: '4rem',
+        textTransform: 'uppercase',
+        '&.small': {
+            fontSize: '2rem'
         }
     },
     donateIconPlace: {

@@ -7,3 +7,6 @@ gsutil cp -r build/static/css gs://api-project-992432653598.appspot.com
 gsutil cp build/index.html gs://api-project-992432653598.appspot.com
 mv build/index.html ../server/static/
 mv build/asset-manifest.json ../server/static/
+mv build/manifest.json ../server/static
+cd ../server
+gcloud -q app deploy app.yaml

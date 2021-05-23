@@ -103,10 +103,10 @@ const Fiction:FC<Props> = ({ setShowHeader, useWhite, serverUrl, play, classes }
                 { fiction.map(f => (<FictionItem key={f.chapter} useWhite={useWhite} fiction={f} />))}
             </Timeline>
             <Modal
+                id="fiction-modal"
                 open={open}
                 onClose={handleClose}
-                aria-labelledby="simple-modal-title"
-                aria-describedby="simple-modal-description"
+                aria-labelledby="miniar-fiction-age-verification"
                 disableBackdropClick
                 disableEscapeKeyDown
                 disableAutoFocus
@@ -121,7 +121,7 @@ const Fiction:FC<Props> = ({ setShowHeader, useWhite, serverUrl, play, classes }
                     <h2 id="simple-modal-title">Are you over 18?</h2>
                     <Box>
                         <Button onClick={() => setOpen(false)}>YES</Button>
-                        <Button onClick={() => navigate()}>NO</Button>
+                        <Button onClick={() => navigate()}>WHATEVER, BORING</Button>
                     </Box>
                 </div>
             </Modal>
@@ -129,4 +129,4 @@ const Fiction:FC<Props> = ({ setShowHeader, useWhite, serverUrl, play, classes }
     );
 };
 
-export default withRouter(withStyles(styles)(Fiction));
+export default withRouter(Fiction);

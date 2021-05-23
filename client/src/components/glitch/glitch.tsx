@@ -1,12 +1,9 @@
-import React, { FC } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import { styles } from '../../styles';
-import { StyledComponent } from '../../types';
+import React from 'react';
 import init from './init';
 
-const Glitch:FC<StyledComponent> = () => {
+const Glitch = () => {
     init();
     return (<></>);
 };
 
-export default withStyles(styles)(Glitch);
+export default Glitch;

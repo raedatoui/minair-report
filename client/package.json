@@ -27,9 +27,12 @@
     ]
   },
   "dependencies": {
+    "@date-io/date-fns": "1.x",
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
+    "@material-ui/pickers": "^3.3.10",
+    "date-fns": "^2.21.3",
     "highcharts": "^9.0.1",
     "highcharts-react-official": "^3.0.0",
     "lodash": "^4.17.21",

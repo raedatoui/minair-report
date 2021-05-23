@@ -174,3 +174,11 @@ def save_measurement():
 
 def get_trends(count):
     return sensor_point.get_trends(count)
+
+
+def get_top(param, count):
+    return sensor_point.get_top(param, count)
+
+
+def get_video():
+    return sensor

@@ -1,5 +1,4 @@
 import React, { FC, useRef, useEffect, useState } from 'react';
-import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
@@ -9,7 +8,6 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import ReactPlayer from 'react-player';
 import screenfull from 'screenfull';
-import { styles } from '../../styles';
 import { CDN, fans as fansPath } from '../../constants';
 import { Media, StyledComponent, ComponentProps } from '../../types';
 import { fetchData } from '../../utils';
@@ -133,4 +131,4 @@ const Fans: FC<ComponentProps> = ({ useWhite, serverUrl, classes }) => {
     );
 };
 
-export default withStyles(styles)(Fans);
+export default Fans;

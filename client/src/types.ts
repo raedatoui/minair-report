@@ -1,16 +1,16 @@
 import { WithStyles } from '@material-ui/core/styles';
 import { styles } from './styles';
 
-export interface AppConfiguration extends Record<string, unknown>{
+export type AppConfiguration = {
     serverUrl: string
-}
+};
 
-export interface StatItem {
+export type StatItem = {
     value: number;
     aqi: number;
     cat: string;
     catIdx: number;
-}
+};
 
 export enum AverageLabels {
     'pm25' = 'Now',
@@ -35,7 +35,7 @@ export const statLabels = [
     'pm251Week',
 ] as const;
 
-export interface DataFrame {
+export type DataFrame = {
     id: number,
     humidity: number;
     temperature: number;
@@ -56,13 +56,13 @@ export interface DataFrame {
     aqi100: number;
     aqiCat100: string;
     aqiIdx100: number;
-}
+};
 
-export interface CurrentDataFrame extends DataFrame {
+export type CurrentDataFrame = DataFrame & {
     stats: {
         [key in keyof typeof AverageLabels]: StatItem
     }
-}
+};
 
 export const defaultDataFrame:DataFrame = {
     id: 0,
@@ -87,19 +87,19 @@ export const defaultDataFrame:DataFrame = {
     aqiIdx100: 0
 };
 
-export interface Fiction {
+export type Fiction = {
     story: string,
     chapter: string
-}
+};
 
-export interface Media {
+export type Media = {
     id: number,
     file: string,
     type: string,
     submittedBy: string,
     order: number,
     poster: string
-}
+};
 
 export interface StyledComponent extends WithStyles<typeof styles> {
     useWhite: boolean
@@ -126,19 +126,26 @@ export const chartCategories: Record<string, string> = {
     aqi100: 'Average US EPA PM10.0 AQI'
 };
 
-export interface ChartData {
+export type ChartData = {
     items: DataFrame[]
-}
+};
 
-export interface Song {
+export type Song = {
     title: string,
     lyrics: string,
     filename: string,
     trackNumber: number,
     icon: string,
-}
+};
 
 export type Rect = {
     x: number;
     y: number;
+};
+
+export type Video = {
+    title: string,
+    video: string,
+    poster: string,
+    path: string
 };
