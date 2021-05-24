@@ -320,7 +320,7 @@ export const styles = (theme: Theme) => createStyles({
     chartSelector: {
         marginRight: 12,
         color: 'white',
-        minWidth: 120,
+        minWidth: 180,
         '&.MuiFilledInput-root': {
             background: purpleAirTransparent,
             '& .MuiButtonBase-root': {
