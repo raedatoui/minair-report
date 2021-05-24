@@ -9,15 +9,13 @@ import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import { StyledComponent } from '../../types';
 
 interface Props extends StyledComponent {
-    setDate: (date: string | null) => void
+    selectedDate: string | null,
+    setSelectedDate: (date: string | null) => void
 }
 
-const DatePickerWrapper: FC<Props> = ({ classes, setDate }) => {
-    const [selectedDate, setSelectedDate] = React.useState<MaterialUiPickersDate>(new Date());
-
+const DatePickerWrapper: FC<Props> = ({ classes, selectedDate, setSelectedDate }) => {
     const handleDateChange = (date: MaterialUiPickersDate) => {
-        setSelectedDate(date);
-        setDate(date?.toISOString().split(':')[0].split('T')[0] ?? null);
+        setSelectedDate(date?.toISOString().split(':')[0].split('T')[0] ?? null);
     };
     return (
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -31,7 +29,7 @@ const DatePickerWrapper: FC<Props> = ({ classes, setDate }) => {
                 margin="normal"
                 id="date-picker-inline"
                 label="Minair Date"
-                value={selectedDate}
+                value={selectedDate ?? new Date()}
                 onChange={handleDateChange}
                 minDate="2021-03-22"
                 maxDate={new Date()}

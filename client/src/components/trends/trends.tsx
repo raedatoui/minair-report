@@ -40,8 +40,8 @@ const Charts:FC<Props> = ({ currentDataFrame, useWhite, serverUrl, classes }) =>
     const [series, setSeries] = useState<Record<keyof typeof chartCategories, SeriesSplineOptions>>({});
     const [xCats, setXCats] = useState<string[]>([]);
 
-    const [timeRange, setTimeRange] = useState<string>('1 hr');
-    const [selectedDate, setSelectedDate] = useState<string | null>();
+    const [timeRange, setTimeRange] = useState<string | null>('1 hr');
+    const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
     useEffect(() => {
         setXCats(olderXCats => ([
@@ -78,13 +78,17 @@ const Charts:FC<Props> = ({ currentDataFrame, useWhite, serverUrl, classes }) =>
     };
 
     useEffect(() => {
-        const tr = timeValues[timeLabels.indexOf(timeRange)];
-        const path = `${serverUrl}/api/trends?count=${tr}`;
-        getSensorData(path);
+        if (timeRange) {
+            setSelectedDate(null);
+            const tr = timeValues[timeLabels.indexOf(timeRange)];
+            const path = `${serverUrl}/api/trends?count=${tr}`;
+            getSensorData(path);
+        }
     }, [serverUrl, timeRange]);
 
     useEffect(() => {
         if (selectedDate) {
+            setTimeRange(null);
             const path = `${serverUrl}/api/day?day=${selectedDate}`;
             getSensorData(path);
         }
@@ -94,7 +98,7 @@ const Charts:FC<Props> = ({ currentDataFrame, useWhite, serverUrl, classes }) =>
         <div className={classes.chartsContainer}>
             <Box>
                 <FormControl variant="filled" className={classes.formControl}>
-                    <InputLabel className={classes.chartSelector}>Chart</InputLabel>
+                    <InputLabel className={classes.chartSelector}>Parameter</InputLabel>
                     <Select
                         value={metric}
                         className={classes.chartSelector}
@@ -106,10 +110,15 @@ const Charts:FC<Props> = ({ currentDataFrame, useWhite, serverUrl, classes }) =>
                     </Select>
                 </FormControl>
                 <FormControl variant="filled" className={classes.formControl}>
-                    <DatePicker classes={classes} useWhite={useWhite} setDate={setSelectedDate} />
+                    <DatePicker
+                        classes={classes}
+                        useWhite={useWhite}
+                        setSelectedDate={setSelectedDate}
+                        selectedDate={selectedDate}
+                    />
                 </FormControl>
                 <FormControl variant="filled" className={classes.formControl}>
-                    <InputLabel className={classes.chartSelector}>Time range</InputLabel>
+                    <InputLabel className={classes.chartSelector}>Time range from now</InputLabel>
                     <Select
                         value={timeRange}
                         className={classes.chartSelector}
@@ -121,7 +130,7 @@ const Charts:FC<Props> = ({ currentDataFrame, useWhite, serverUrl, classes }) =>
                     </Select>
                 </FormControl>
             </Box>
-            <Graph useWhite={useWhite} xCats={xCats} timeRange={timeRange} series={series} metric={metric} />
+            <Graph useWhite={useWhite} xCats={xCats} timeRange={timeRange ?? '1 week'} series={series} metric={metric} />
         </div>
     );
 };
