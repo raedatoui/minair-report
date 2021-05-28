@@ -309,7 +309,9 @@ export const styles = (theme: Theme) => createStyles({
 
     chartsContainer: {
         marginTop: containerPadding,
-        textAlign: 'left'
+        textAlign: 'left',
+        width: '100%',
+        maxWidth: '100%'
     },
     formControl: {
         margin: theme.spacing(1),

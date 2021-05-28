@@ -132,7 +132,9 @@ def load_current2():
 
 def save_measurement():
     r = requests.get(API_URL, headers=HEADERS)
+    print(r.status_code)
     data = r.json()
+    print(data)
     sensor = data['sensor']
     o = dict()
 
