@@ -175,7 +175,7 @@ def get_by_date(day):
         sql_query = """
         SELECT *
         FROM measurement 
-        WHERE timestamp >= UNIX_TIMESTAMP(:day) AND timestamp < (UNIX_TIMESTAMP(:day) + 60*60*24)
+        WHERE timestamp >= UNIX_TIMESTAMP(:day) + 60*60*24 AND timestamp < (UNIX_TIMESTAMP(:day) + 2*60*60*24)
         ORDER BY timestamp ASC;
         """
         rows = session.execute(

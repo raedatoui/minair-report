@@ -38,7 +38,7 @@ const Charts:FC<Props> = ({ currentDataFrame, useWhite, serverUrl, classes }) =>
 
     const [metric, setMetric] = useState<keyof typeof chartCategories>(param);
     const [series, setSeries] = useState<Record<keyof typeof chartCategories, SeriesSplineOptions>>({});
-    const [xCats, setXCats] = useState<string[]>([]);
+    const [xCats, setXCats] = useState<number[]>([]);
 
     const [timeRange, setTimeRange] = useState<string | null>('1 hr');
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -46,7 +46,7 @@ const Charts:FC<Props> = ({ currentDataFrame, useWhite, serverUrl, classes }) =>
     useEffect(() => {
         setXCats(olderXCats => ([
             ...olderXCats,
-            currentDataFrame.timestamp.toString()
+            currentDataFrame.timestamp
         ]));
 
         setSeries(oldSeries => (
@@ -74,7 +74,7 @@ const Charts:FC<Props> = ({ currentDataFrame, useWhite, serverUrl, classes }) =>
                 data: chartData.map(d => d[k])
             }
         }), {}));
-        setXCats(chartData.map(d => d.timestamp.toString()));
+        setXCats(chartData.map(d => d.timestamp));
     };
 
     useEffect(() => {
