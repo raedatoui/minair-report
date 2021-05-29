@@ -1,12 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { FC, useEffect, useState } from 'react';
 import Highcharts, {
+    Chart,
     Options,
     SeriesSplineOptions,
     XAxisOptions,
     YAxisOptions,
-    Tooltip,
-    TooltipFormatterCallbackFunction,
     AxisLabelsFormatterCallbackFunction,
     TooltipFormatterContextObject
 } from 'highcharts';
@@ -14,9 +12,7 @@ import HighchartsReact from 'highcharts-react-official';
 import { cloneDeep } from 'lodash';
 import { lightGreen, yellow, orange, red, burgundy, purple } from '../../styles';
 import { chartCategories } from '../../types';
-import { timestampToDate } from '../../utils';
-
-const offset = new Date().getTimezoneOffset() * 60000;
+import { timestampToDate, debounce } from '../../utils';
 
 type TimeFormatter = {
     interval: number,
@@ -26,27 +22,27 @@ type TimeFormatter = {
 const timeFormatters: Record<string, TimeFormatter> = {
     '1 hr': {
         interval: 5,
-        formatter: ({ value } : { value: number | string }): string => Highcharts.dateFormat('%I:%M %p', value as number * 1000 - offset)
+        formatter: ({ value } : { value: number | string }): string => timestampToDate('%I:%M %p', value as number)
     },
     '2 hrs': {
         interval: 5,
-        formatter: ({ value } : { value: number | string }): string => Highcharts.dateFormat('%I:%M %p', value as number * 1000 - offset)
+        formatter: ({ value } : { value: number | string }): string => timestampToDate('%I:%M %p', value as number)
     },
     '4 hrs': {
         interval: 10,
-        formatter: ({ value } : { value: number | string }): string => Highcharts.dateFormat('%I:%M %p', value as number * 1000 - offset)
+        formatter: ({ value } : { value: number | string }): string => timestampToDate('%I:%M %p', value as number)
     },
     '24 hrs': {
         interval: 50,
-        formatter: ({ value } : { value: number | string }): string => Highcharts.dateFormat('%I:%M %p', value as number * 1000 - offset)
+        formatter: ({ value } : { value: number | string }): string => timestampToDate('%I:%M %p', value as number)
     },
     '3 days': {
         interval: 500,
-        formatter: ({ value } : { value: number | string }): string => Highcharts.dateFormat('%m/%d', value as number * 1000 - offset)
+        formatter: ({ value } : { value: number | string }): string => timestampToDate('%m/%d', value as number)
     },
     '1 week': {
         interval: 750,
-        formatter: ({ value } : { value: number | string }): string => Highcharts.dateFormat('%m/%d', value as number * 1000 - offset)
+        formatter: ({ value } : { value: number | string }): string => timestampToDate('%m/%d', value as number)
     }
 };
 
@@ -64,7 +60,6 @@ const options: Options = {
         zoomType: 'x',
         backgroundColor: 'rgba(0,0,0,0)',
         type: 'spline',
-        // height: `${(9 / 16) * 100}%`,
         style: {
             fontFamily: 'Roboto',
             fontWeight: '700'
@@ -97,9 +92,7 @@ const options: Options = {
     },
     tooltip: {
         shared: true,
-        formatter(this:TooltipFormatterContextObject, tooltip: Tooltip) : string {
-            // eslint-disable-next-line no-debugger
-            debugger;
+        formatter(this:TooltipFormatterContextObject) : string {
             const ts = timestampToDate('%m/%d %I:%M %p', this.x);
             return `${ts}<br />● ${this.points?.[0]?.series.name}: ${this.y}`;
         }
@@ -192,6 +185,8 @@ interface Props {
     xCats: number[];
 }
 
+let chartComponent:Chart;
+
 export const Graph: FC<Props> = ({ useWhite, metric, timeRange, series, xCats }) => {
     const [chartOptions, setChartOptions] = useState<Options>();
 
@@ -240,8 +235,25 @@ export const Graph: FC<Props> = ({ useWhite, metric, timeRange, series, xCats })
         });
     }, [useWhite, xCats, metric, timeRange]);
 
+    useEffect(() => {
+        const fn = debounce(() => {
+            setChartOptions({
+                ...chartOptions,
+                chart: {
+                    ...options.chart,
+                    width: document.body.clientWidth
+                }
+            });
+            chartComponent.reflow();
+        }, 50);
+        const dfn = () => fn();
+        window.addEventListener('resize', dfn);
+        return () => window.removeEventListener('resize', dfn);
+    }, [chartOptions]);
+
     return (
         <HighchartsReact
+            callback={(c:Chart) => { chartComponent = c; }}
             highcharts={Highcharts}
             options={{
                 ...chartOptions,
