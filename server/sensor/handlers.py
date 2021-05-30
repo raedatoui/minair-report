@@ -8,6 +8,7 @@ from sensor import config
 from sensor.api import app
 from sensor.utils.api_utils import flaskify, convert_json
 from sensor.utils import response
+from sensor.utils.exceptions import MinairError
 from sensor.utils.datetime_json_encoder import Encoder
 from sensor.logic import sensor
 from sensor.logic import fans
@@ -122,6 +123,13 @@ def exception_handler(error):
     message = (
         'The server encountered an internal error '
         'and was unable to complete your request.')
+
+    if isinstance(error, MinairError):
+        return flaskify(response.create_error_response(
+            code='whatever-boring',
+            message=error.message,
+            status=error.status
+        ))
 
     if isinstance(error, HTTPException):
         return flaskify(response.create_error_response(
