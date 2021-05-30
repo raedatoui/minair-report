@@ -1,7 +1,7 @@
 import requests
 import math
 from datetime import datetime
-
+from sensor.utils.exceptions import MinairError
 from sensor.models import sensor_point
 
 
@@ -178,6 +178,9 @@ def get_trends(count):
 
 
 def get_top(param, count):
+    valid_fields = [db_fields[k] for k in db_fields.keys()]
+    if param not in valid_fields:
+        raise MinairError.bad_request('incorrect param for all time high')
     return sensor_point.get_top(param, count)
 
 def get_day(day):
