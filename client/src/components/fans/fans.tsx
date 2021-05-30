@@ -1,4 +1,5 @@
 import React, { FC, useRef, useEffect, useState } from 'react';
+import { uniq, filter, sortBy } from 'lodash';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
@@ -6,6 +7,11 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
+import MenuItem from '@material-ui/core/MenuItem';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import Box from '@material-ui/core/Box';
+import Select from '@material-ui/core/Select';
 import ReactPlayer from 'react-player';
 import screenfull from 'screenfull';
 import { CDN, fans as fansPath } from '../../constants';
@@ -107,26 +113,90 @@ const FanVideo: FC<FanVideoProps> = ({ useWhite, video, classes }) => {
 
 const Fans: FC<ComponentProps> = ({ useWhite, serverUrl, classes }) => {
     const [media, setMedia] = useState<Media[]>([]);
+    const [authors, setAuthors] = useState<string[]>([]);
+    const [currentAuthor, setCurrentAuthor] = useState<string>('All');
+    const [order, setOrder] = useState<string>('Not Boring!');
+
+    const [currentMedia, setCurrentMedia] = useState<Media[]>([]);
+    const [toggleOrder, setToggleOrder] = useState<boolean>(false);
+
+    const handleOrderChange = (value: string) => {
+        setOrder(value);
+        setToggleOrder(prevToggleOrder => !prevToggleOrder);
+    };
 
     useEffect(() => {
         const getMedia = async () => {
             const data = await fetchData<Media[]>(`${serverUrl}/api/media`);
-            setMedia(shuffle<Media>(data));
+            const initalMedia = shuffle<Media>(data);
+            setMedia(initalMedia);
+            setCurrentMedia(initalMedia);
+            const allAuthors = ['All'].concat(uniq<string>(data.map(m => m.submittedBy)));
+            setAuthors(allAuthors.sort());
         };
         getMedia();
 
     }, [serverUrl]);
+
+    useEffect(() => {
+        let data;
+        if (currentAuthor === 'All')
+            data = media;
+        else
+            data = filter(media, (m) => m.submittedBy === currentAuthor);
+        if (order === 'Not Boring!')
+            data = shuffle<Media>(data);
+        else
+            data = sortBy(data, 'id').reverse();
+        setCurrentMedia(data);
+    }, [currentAuthor, media, order]);
+
+    useEffect(() => {
+        console.log(toggleOrder);
+        if (order === 'Not Boring!')
+            setCurrentMedia(oldMedia => shuffle<Media>(oldMedia));
+    }, [toggleOrder, order, media]);
+
     return (
+
         <div className={classes.fanCardContainer}>
-            { media.map(v => {
-                if (v.type === 'video') return (
-                    <FanVideo useWhite={useWhite} video={v} key={v.id} classes={classes} />
-                );
-                if (v.type === 'image') return (
-                    <FanImage useWhite={useWhite} image={v} key={v.id} classes={classes} />
-                );
-                return <></>;
-            })}
+            <Box>
+                <FormControl variant="filled" className={classes.formControl}>
+                    <InputLabel className={classes.chartSelector}>Submitted By</InputLabel>
+                    <Select
+                        value={currentAuthor}
+                        className={classes.chartSelector}
+                        onChange={({ target: { value } }) => setCurrentAuthor(value as string)}
+                    >
+                        {authors.map(v => (
+                            <MenuItem key={v} value={v}>{v}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+                <FormControl variant="filled" className={classes.formControl}>
+                    <InputLabel className={classes.chartSelector}>Order</InputLabel>
+                    <Select
+                        value={order}
+                        className={classes.chartSelector}
+                        onClose={() => setToggleOrder(prevToggleOrder => !prevToggleOrder)}
+                        onChange={({ target: { value } }) => handleOrderChange(value as string)}
+                    >
+                        <MenuItem value="Newest">Newest</MenuItem>
+                        <MenuItem value="Not Boring!">Not Boring!</MenuItem>
+                    </Select>
+                </FormControl>
+            </Box>
+            <div className={classes.fanMediaContainer}>
+                { currentMedia.map(v => {
+                    if (v.type === 'video') return (
+                        <FanVideo useWhite={useWhite} video={v} key={v.id} classes={classes} />
+                    );
+                    if (v.type === 'image') return (
+                        <FanImage useWhite={useWhite} image={v} key={v.id} classes={classes} />
+                    );
+                    return <></>;
+                })}
+            </div>
         </div>
     );
 };

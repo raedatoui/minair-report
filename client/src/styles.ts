@@ -239,11 +239,13 @@ export const styles = (theme: Theme) => createStyles({
         }
     },
     fanCardContainer: {
+        marginTop: containerPadding
+    },
+    fanMediaContainer: {
         display: 'flex',
         flexWrap: 'wrap',
         justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: containerPadding
+        alignItems: 'center'
     },
     fanCard: {
         width: 345,

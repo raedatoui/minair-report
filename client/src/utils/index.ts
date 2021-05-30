@@ -1,14 +1,9 @@
-import { dateFormat } from 'highcharts';
 import { fetchData } from './fetch-data';
 import { useInterval } from './user-interval';
 import { makeAudio, AudioContext } from './audio-context';
 import { debounce } from './debounce';
 import { useBbox } from './rect';
-
-const timestampToDate = (f:string, x:number): string => {
-    const offset = new Date().getTimezoneOffset() * 60000;
-    return dateFormat(f, x * 1000 - offset);
-};
+import { timestampToDate } from './highcharts-timestamp';
 
 export {
     fetchData,
