@@ -13,19 +13,21 @@ import { Graph } from './graph';
 const timeLabels = [
     '1 hr',
     '2 hrs',
-    '4 hrs',
+    '6 hrs',
+    '12 hrs',
     '24 hrs',
     '3 days',
     '1 week'
 ];
 
 const timeValues = [
-    30,
-    60,
-    120,
-    720,
-    2160,
-    5040
+    1,
+    2,
+    6,
+    12,
+    24,
+    24 * 3,
+    24 * 7
 ];
 
 interface Props extends ComponentProps {

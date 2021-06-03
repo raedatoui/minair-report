@@ -146,13 +146,24 @@ def latest():
 
 def get_trends(count):
     with mysql.purp_db_session() as session:
-        query = session.query(Measurement).options(defer(Measurement.stats))
-        sort_field = Measurement.__table__.c.id.desc()
-        query = query.order_by(sort_field)
-        query = query.limit(count)
-        rows = query.all()
-        items = [row.to_dict(False, False) for row in rows]
-        items.reverse()
+        # query = session.query(Measurement).options(defer(Measurement.stats))
+        # sort_field = Measurement.__table__.c.id.desc()
+        # query = query.order_by(sort_field)
+        # query = query.limit(count)
+        select_params = {
+            'hours': 60*60*int(count)
+        }
+        print(count)
+        sql_query = """
+        SELECT *
+        FROM measurement 
+        WHERE timestamp >= UNIX_TIMESTAMP(NOW()) - :hours
+        ORDER BY timestamp ASC;
+        """
+        rows = session.execute(
+            sql_query,
+            select_params).fetchall()
+        items = [Measurement(**dict(row)).to_dict(False, False) for row in rows]
         return items
 
 
@@ -166,6 +177,7 @@ def get_top(param, count):
         rows = query.all()
         items = [row.to_dict(False, False) for row in rows]
         return items
+
 
 def get_by_date(day):
     with mysql.purp_db_session() as session:

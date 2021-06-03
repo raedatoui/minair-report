@@ -4,7 +4,6 @@ from datetime import datetime
 from sensor.utils.exceptions import MinairError
 from sensor.models import sensor_point
 
-
 db_fields = {
     "humidity_a": "humidity",
     "pressure_a": "pressure",
@@ -19,7 +18,6 @@ db_fields = {
     "5.0_um_count_a": "um_count_5_0",
     "10.0_um_count_a": "um_count_10_0",
 }
-
 
 stats_fields = [
     "pm2.5",
@@ -69,7 +67,7 @@ def aqi_pm_25(conc):
     elif 350.5 <= c < 500.5:
         aqi = linear(500, 401, 500.4, 350.5, c)
     else:
-        aqi = "PM25message"
+        aqi = linear(501, 999, 	500.5, 99999.9, c)
     return aqi
 
 
@@ -90,9 +88,10 @@ def api_pm_10(conc):
     elif 505 <= c < 605:
         aqi = linear(500, 401, 604, 505, c)
     else:
-        aqi = "PM10message"
+        aqi = c
 
     return aqi
+
 
 def aqi_cat(aqi):
     if aqi <= 50:
@@ -134,7 +133,6 @@ def save_measurement():
     r = requests.get(API_URL, headers=HEADERS)
     print(r.status_code)
     data = r.json()
-    print(data)
     sensor = data['sensor']
     o = dict()
 
@@ -169,7 +167,8 @@ def save_measurement():
             }
     o['stats'] = formatted_stats
     m = sensor_point.create_measurement(o)
-
+    print(data)
+    print('==========')
     return m
 
 
@@ -182,6 +181,7 @@ def get_top(param, count):
     if param not in valid_fields:
         raise MinairError.bad_request('incorrect param for all time high')
     return sensor_point.get_top(param, count)
+
 
 def get_day(day):
     return sensor_point.get_by_date(day)
