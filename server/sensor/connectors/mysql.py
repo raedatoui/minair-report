@@ -27,7 +27,8 @@ def _create_engine(db_url):
             db_url, pool_size=POOL_SIZE,
             max_overflow=POOL_MAX_OVERFLOW,
             pool_recycle=POOL_RECYCLE_MS,
-            connect_args={"init_command": "SET SESSION time_zone='US/Eastern'"})
+            #connect_args={"init_command": "SET SESSION time_zone='America/New_York'"}
+        )
 
     return create_engine(db_url, poolclass=POOL_CLASS)
 

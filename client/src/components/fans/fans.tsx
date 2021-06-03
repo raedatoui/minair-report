@@ -147,12 +147,11 @@ const Fans: FC<ComponentProps> = ({ useWhite, serverUrl, classes }) => {
         if (order === 'Not Boring!')
             data = shuffle<Media>(data);
         else
-            data = sortBy(data, 'id').reverse();
+            data = sortBy(data, 'order').reverse();
         setCurrentMedia(data);
     }, [currentAuthor, media, order]);
 
     useEffect(() => {
-        console.log(toggleOrder);
         if (order === 'Not Boring!')
             setCurrentMedia(oldMedia => shuffle<Media>(oldMedia));
     }, [toggleOrder, order, media]);

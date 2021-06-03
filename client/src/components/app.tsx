@@ -30,6 +30,7 @@ const backgrounds = [
     'red',
     'burgundy',
     'burgundy',
+    'burgundy',
     'burgundy'
 ];
 

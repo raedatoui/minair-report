@@ -28,7 +28,11 @@ const timeFormatters: Record<string, TimeFormatter> = {
         interval: 5,
         formatter: ({ value } : { value: number | string }): string => timestampToDate('%I:%M %p', value as number)
     },
-    '4 hrs': {
+    '6 hrs': {
+        interval: 10,
+        formatter: ({ value } : { value: number | string }): string => timestampToDate('%I:%M %p', value as number)
+    },
+    '12 hrs': {
         interval: 10,
         formatter: ({ value } : { value: number | string }): string => timestampToDate('%I:%M %p', value as number)
     },
@@ -169,6 +173,17 @@ const aqiPlotBands = [
         color: purple,
         label: {
             text: 'Hazardous++',
+            useHtml: true,
+            style: {
+                backgroundColor: 'rgba(0,0,0,0.5)'
+            }
+        }
+    }, {
+        from: 501,
+        to: 5000,
+        color: purple,
+        label: {
+            text: 'Off The Charts!',
             useHtml: true,
             style: {
                 backgroundColor: 'rgba(0,0,0,0.5)'

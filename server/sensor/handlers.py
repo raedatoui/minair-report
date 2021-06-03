@@ -108,7 +108,8 @@ def get_by_day():
 @app.route('/api/high')
 def get_all_high():
     param = request.args.get('param')
-    return responsify_and_flaskify_success(sensor.get_top(param, 20))
+    count = request.args.get('count', 20)
+    return responsify_and_flaskify_success(sensor.get_top(param, count))
 
 
 @app.errorhandler(Exception)

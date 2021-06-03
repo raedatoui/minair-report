@@ -31,6 +31,7 @@ const Current: FC<Props> = ({ history, useWhite, dataFrame, classes }) => {
         classes.red,
         classes.burgundy,
         classes.purple,
+        classes.purple,
         classes.purple
     ];
     const catColorFullMapping = [
@@ -39,6 +40,7 @@ const Current: FC<Props> = ({ history, useWhite, dataFrame, classes }) => {
         classes.orangeFull,
         classes.redFull,
         classes.burgundyFull,
+        classes.purpleFull,
         classes.purpleFull,
         classes.purpleFull
     ];
