@@ -67,7 +67,7 @@ def aqi_pm_25(conc):
     elif 350.5 <= c < 500.5:
         aqi = linear(500, 401, 500.4, 350.5, c)
     else:
-        aqi = linear(501, 999, 	500.5, 99999.9, c)
+        aqi = linear(501, 600, 500.5, 3000, c)
     return aqi
 
 
@@ -134,14 +134,20 @@ def save_measurement():
     print(r.status_code)
     data = r.json()
     sensor = data['sensor']
-    o = dict()
+    m = save(sensor)
+    print(data)
+    print('==========')
+    return m
 
+
+def save(pt):
+    o = dict()
     for k in db_fields.keys():
-        o[db_fields[k]] = sensor[k]
+        o[db_fields[k]] = pt[k]
 
     o['humidity'] = o['humidity'] + 4
     o['temperature'] = o['temperature'] - 8
-    o['timestamp'] = sensor['last_seen']
+    o['timestamp'] = pt['last_seen']
 
     o['aqi_2_5'] = aqi_pm_25(o['pm_2_5'])
     c, i = aqi_cat(o['aqi_2_5'])
@@ -154,7 +160,7 @@ def save_measurement():
     o['aqi_idx_10_0'] = i
 
     formatted_stats = dict()
-    for k, v in sensor['stats_a'].items():
+    for k, v in pt['stats_a'].items():
         if k != 'time_stamp':
             aqi = aqi_pm_25(v)
             c, i = aqi_cat(aqi)
@@ -167,8 +173,6 @@ def save_measurement():
             }
     o['stats'] = formatted_stats
     m = sensor_point.create_measurement(o)
-    print(data)
-    print('==========')
     return m
 
 
