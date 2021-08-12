@@ -31,6 +31,7 @@ def responsify_and_flaskify_success(message):
 @app.route('/sal-blows-4-minair')
 @app.route('/donations')
 @app.route('/all-time-high')
+@app.route('/erotica-readings')
 def index():
     return render_template('index.html')
 
