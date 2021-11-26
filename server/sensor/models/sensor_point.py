@@ -153,7 +153,6 @@ def get_trends(count):
         select_params = {
             'hours': 60*60*int(count)
         }
-        print(count)
         sql_query = """
         SELECT *
         FROM measurement 
