@@ -1,3 +1,7 @@
 env
 static
 .env
+__pycache__
+storage-key.json
+logs
+.idea
