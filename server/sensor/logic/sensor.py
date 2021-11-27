@@ -1,8 +1,13 @@
+import json
 import requests
 import math
 from datetime import datetime
 from sensor.utils.exceptions import MinairError
 from sensor.models import sensor_point
+from google.cloud import storage
+
+client = storage.Client()
+bucket = client.get_bucket('minair.me')
 
 db_fields = {
     "humidity_a": "humidity",
@@ -135,8 +140,11 @@ def save_measurement():
     data = r.json()
     sensor = data['sensor']
     m = save(sensor)
-    print(data)
-    print('==========')
+    upload_file('current.json', sensor_point.latest())
+    upload_file('1hour.json', sensor_point.get_trends(1))
+    upload_file('6hour.json', sensor_point.get_trends(6))
+    upload_file('24hour.json', sensor_point.get_trends(24))
+    upload_file('1week.json', sensor_point.get_trends(168))
     return m
 
 
@@ -189,3 +197,8 @@ def get_top(param, count):
 
 def get_day(day):
     return sensor_point.get_by_date(day)
+
+
+def upload_file(filename, content):
+    blob = bucket.blob('data/{}'.format(filename))
+    blob.upload_from_string(json.dumps(content))
