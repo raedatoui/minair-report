@@ -127,7 +127,7 @@ const Fans: FC<ComponentProps> = ({ useWhite, serverUrl, classes }) => {
 
     useEffect(() => {
         const getMedia = async () => {
-            const data = await fetchData<Media[]>(`${serverUrl}/api/media`);
+            const data = await fetchData<Media[]>(`${serverUrl}/data/media.json`);
             const initalMedia = shuffle<Media>(data);
             setMedia(initalMedia);
             setCurrentMedia(initalMedia);

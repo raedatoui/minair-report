@@ -19,12 +19,12 @@ body {
     background-size: cover;
     min-height: 100%;
     display: flex;
-    cursor: url('https://storage.googleapis.com/api-project-992432653598.appspot.com/logo/cursor-sm.png'), auto;
+    cursor: url('https://minair.me/logo/cursor-sm.png'), auto;
     position:relative;
 }
 
 button:focus, button:hover {
-  cursor: url('https://storage.googleapis.com/api-project-992432653598.appspot.com/logo/cursor-sm.png'), auto;
+  cursor: url('https://minair.me/logo/cursor-sm.png'), auto;
 }
 
 p {
