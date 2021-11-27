@@ -114,12 +114,12 @@ const App: FC<Props> = ({ config, classes }) => {
 
     useEffect(() => {
         const getSensorData = async () => {
-            const df = await fetchData<CurrentDataFrame>(`${config.serverUrl}/api/current`);
+            const df = await fetchData<CurrentDataFrame>(`${config.serverUrl}/data/current.json`);
             if (!dataFrame || (df.timestamp > dataFrame?.timestamp))
                 processDataFrame(df);
         };
         const getSongs = async () => {
-            const sg = await fetchData<Song[]>(`${config.serverUrl}/api/songs`);
+            const sg = await fetchData<Song[]>(`${config.serverUrl}/data/songs.json`);
             setSongs(sg.map(s => ({
                 ...s,
                 filename: `${CDN}${audioPath}${s.filename}`
@@ -133,7 +133,7 @@ const App: FC<Props> = ({ config, classes }) => {
 
     useInterval(() => {
         const getSensorData = async () => {
-            const df = await fetchData<CurrentDataFrame>(`${config.serverUrl}/api/current`);
+            const df = await fetchData<CurrentDataFrame>(`${config.serverUrl}/data/current.json`);
             if (!dataFrame || (df.timestamp > dataFrame?.timestamp))
                 processDataFrame(df);
         };

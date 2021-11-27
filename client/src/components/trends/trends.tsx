@@ -7,27 +7,22 @@ import FormControl from '@material-ui/core/FormControl';
 import Box from '@material-ui/core/Box';
 import { DataFrame, ComponentProps, chartCategories } from '../../types';
 import { fetchData } from '../../utils';
-import DatePicker from './date-picker';
 import { Graph } from './graph';
 
 const timeLabels = [
     '1 hr',
-    '2 hrs',
     '6 hrs',
     '12 hrs',
     '24 hrs',
-    '3 days',
     '1 week'
 ];
 
-const timeValues = [
-    1,
-    2,
-    6,
-    12,
-    24,
-    24 * 3,
-    24 * 7
+const timeFiles = [
+    '1hour.json',
+    '6hour.json',
+    '12hour.json',
+    '24hour.json',
+    '1week.json'
 ];
 
 interface Props extends ComponentProps {
@@ -82,8 +77,8 @@ const Charts:FC<Props> = ({ currentDataFrame, useWhite, serverUrl, classes }) =>
     useEffect(() => {
         if (timeRange) {
             setSelectedDate(null);
-            const tr = timeValues[timeLabels.indexOf(timeRange)];
-            const path = `${serverUrl}/api/trends?count=${tr}`;
+            const tf = timeFiles[timeLabels.indexOf(timeRange)];
+            const path = `${serverUrl}/data/${tf}`;
             getSensorData(path);
         }
     }, [serverUrl, timeRange]);
@@ -110,14 +105,6 @@ const Charts:FC<Props> = ({ currentDataFrame, useWhite, serverUrl, classes }) =>
                             <MenuItem key={k} value={k}>{v}</MenuItem>
                         ))}
                     </Select>
-                </FormControl>
-                <FormControl variant="filled" className={classes.formControl}>
-                    <DatePicker
-                        classes={classes}
-                        useWhite={useWhite}
-                        setSelectedDate={setSelectedDate}
-                        selectedDate={selectedDate}
-                    />
                 </FormControl>
                 <FormControl variant="filled" className={classes.formControl}>
                     <InputLabel className={classes.chartSelector}>Time range from now</InputLabel>

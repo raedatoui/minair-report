@@ -87,7 +87,7 @@ const Fiction:FC<Props> = ({ setShowHeader, useWhite, serverUrl, play, classes }
 
     useEffect(() => {
         const getFiction = async () => {
-            const data = await fetchData<FictionType[]>(`${serverUrl}/api/fiction`);
+            const data = await fetchData<FictionType[]>(`${serverUrl}/data/fiction.json`);
             setFiction(data);
         };
         getFiction();
