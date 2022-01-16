@@ -102,9 +102,13 @@ def save_data():
 
 
 @app.route('/api/day')
-def get_by_day():
-    day = request.args.get('day')
-    return responsify_and_flaskify_success(sensor.get_day(day))
+def get_day():
+    return responsify_and_flaskify_success(sensor.get_day())
+
+
+@app.route('/api/week')
+def get_week():
+    return responsify_and_flaskify_success(sensor.get_week())
 
 
 @app.route('/api/high')
