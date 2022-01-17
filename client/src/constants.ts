@@ -1,4 +1,4 @@
-export const CDN = 'http://www.minair.me';
+export const CDN = 'https://storage.googleapis.com/www.minair.me';
 export const fans = '/fans/';
 export const audio = '/audio/';
 export const menu = '/menu/';
