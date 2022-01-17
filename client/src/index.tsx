@@ -7,8 +7,9 @@ import App from './components/app';
 import { mainTheme } from './styles';
 import { AppConfiguration } from './types';
 import { AudioContext, makeAudio } from './utils';
+import { CDN } from './constants';
 
-const serverUrl = 'http://www.minair.me';
+const serverUrl = CDN;
 
 const config:AppConfiguration = {
     serverUrl
