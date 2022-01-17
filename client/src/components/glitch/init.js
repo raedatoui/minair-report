@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-param-reassign */
 /* eslint-disable global-require */
+import { CDN } from '../../constants';
 
 const THREE = require('three');
 const debounce = require('./debounce.js');
@@ -16,8 +17,8 @@ const normalizeVector2 = function (vector) {
 };
 
 const images = [
-    ['https://minair.me/media/minair.jpg', 2048, 1152],
-    ['https://minair.me/media/minair-mb.jpg', 828, 1792],
+    [`${CDN}/media/minair.jpg`, 2048, 1152],
+    [`${CDN}/media/minair-mb.jpg`, 828, 1792],
 ];
 export default function () {
     const canvas = document.getElementById('canvas-webgl');
