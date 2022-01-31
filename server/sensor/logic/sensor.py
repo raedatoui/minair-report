@@ -155,7 +155,7 @@ def save_measurement():
         'aqi_10_0': compute_averages(day_data, day_len, 'aqi_10_0', 50),
         'temperature': compute_averages(day_data, day_len, 'temperature', 75),
         'pressure': compute_averages(day_data, day_len, 'pressure', 30.0),
-        'humidity': compute_averages_range(day_data, day_len, 'humidity', 40,60)
+        'humidity': compute_averages_range(day_data, day_len, 'humidity', 40, 60)
     }
     upload_file('24hour.json', day_data)
     upload_file('24htrends.json', day_percentages)

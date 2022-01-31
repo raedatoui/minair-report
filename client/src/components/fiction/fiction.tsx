@@ -17,7 +17,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { styles } from '../../styles';
 import { Fiction as FictionType, StyledComponent, ComponentProps } from '../../types';
 import { fetchData } from '../../utils';
-import { CDN } from '../../constants';
+import { CDN, apiRoutes } from '../../constants';
 
 interface Story extends StyledComponent {
     fiction: FictionType
@@ -67,7 +67,7 @@ interface Props extends RouteComponentProps, ComponentProps {
     play: () => void,
 }
 
-const Fiction:FC<Props> = ({ setShowHeader, useWhite, serverUrl, play, classes }) => {
+const Fiction:FC<Props> = ({ setShowHeader, useWhite, play, classes }) => {
     const [fiction, setFiction] = useState<FictionType[]>([]);
     const [open, setOpen] = React.useState(true);
     const [modalStyle] = React.useState(getModalStyle);
@@ -87,12 +87,12 @@ const Fiction:FC<Props> = ({ setShowHeader, useWhite, serverUrl, play, classes }
 
     useEffect(() => {
         const getFiction = async () => {
-            const data = await fetchData<FictionType[]>(`${serverUrl}/data/fiction.json`);
+            const data = await fetchData<FictionType[]>(apiRoutes.fiction);
             setFiction(data);
         };
         getFiction();
 
-    }, [serverUrl]);
+    }, []);
 
     return (
         <div className={classes.fictionContainer}>

@@ -19,42 +19,6 @@ def responsify_and_flaskify_success(message):
     return flaskify(response.Response(message=convert_json(message)), encoder=Encoder)
 
 
-@app.route('/')
-@app.route('/current')
-@app.route('/fans')
-@app.route('/fiction')
-@app.route('/trends')
-@app.route('/songs')
-@app.route('/minair-seminair')
-@app.route('/minair-seminair-bts')
-@app.route('/cock-club-initiation')
-@app.route('/sal-blows-4-minair')
-@app.route('/donations')
-@app.route('/all-time-high')
-@app.route('/erotica-readings')
-def index():
-    return render_template('index.html')
-
-@app.route('/manifest.json')
-def send_manifest_file():
-    return send_from_directory('static', 'manifest.json')
-
-@app.route('/media/<path:path>')
-def send_static_file(path):
-    return send_from_directory('static', 'media/{}'.format(path))
-
-
-@app.route('/favicon.ico')
-@app.route('/favicon')
-def send_faviocn():
-    return send_from_directory('static/', 'favicon.ico')
-
-
-@app.route('/robots.txt')
-def send_robots():
-    return send_from_directory('static/', 'robots.txt')
-
-
 @app.route(config.HEALTH_CHECK, methods=['GET'])
 def health():
     """Check the health of the application."""
@@ -72,12 +36,6 @@ def get_media():
     return responsify_and_flaskify_success(fans.get_media())
 
 
-@app.route('/api/trends')
-def get_hour():
-    count = request.args.get('count')
-    return responsify_and_flaskify_success(sensor.get_trends(count))
-
-
 @app.route('/api/songs')
 def get_songs():
     return responsify_and_flaskify_success(fans.get_songs())
@@ -89,25 +47,50 @@ def get_videos():
 
 
 # sensor
-@app.route('/api/current')
-def current_data():
-    df = sensor.load_current2()
-    return responsify_and_flaskify_success(df)
-
-
 @app.route('/api/save')
 def save_data():
     df = sensor.save_measurement()
     return responsify_and_flaskify_success(df)
 
 
-@app.route('/api/day')
-def get_day():
+@app.route('/api/current')
+def current_data():
+    df = sensor.load_current2()
+    return responsify_and_flaskify_success(df)
+
+
+@app.route('/api/1hour')
+def get_hour():
+    return responsify_and_flaskify_success(sensor.get_trends(1))
+
+
+@app.route('/api/6hour')
+def get_6hour():
+    return responsify_and_flaskify_success(sensor.get_trends(6))
+
+
+@app.route('/api/12hour')
+def get_12hour():
+    return responsify_and_flaskify_success(sensor.get_trends(12))
+
+
+@app.route('/api/24hour')
+def get_24hour():
+    return responsify_and_flaskify_success(sensor.get_trends(24))
+
+
+@app.route('/api/1week')
+def get_week():
+    return responsify_and_flaskify_success(sensor.get_trends(24*7))
+
+
+@app.route('/api/24htrends')
+def get_day_trends():
     return responsify_and_flaskify_success(sensor.get_day())
 
 
-@app.route('/api/week')
-def get_week():
+@app.route('/api/1weektrends')
+def get_week_trends():
     return responsify_and_flaskify_success(sensor.get_week())
 
 

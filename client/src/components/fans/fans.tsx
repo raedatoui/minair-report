@@ -14,7 +14,7 @@ import Box from '@material-ui/core/Box';
 import Select from '@material-ui/core/Select';
 import ReactPlayer from 'react-player';
 import screenfull from 'screenfull';
-import { CDN, fans as fansPath } from '../../constants';
+import { CDN, fans as fansPath, apiRoutes } from '../../constants';
 import { Media, StyledComponent, ComponentProps } from '../../types';
 import { fetchData } from '../../utils';
 
@@ -111,7 +111,7 @@ const FanVideo: FC<FanVideoProps> = ({ useWhite, video, classes }) => {
     );
 };
 
-const Fans: FC<ComponentProps> = ({ useWhite, serverUrl, classes }) => {
+const Fans: FC<ComponentProps> = ({ useWhite, classes }) => {
     const [media, setMedia] = useState<Media[]>([]);
     const [authors, setAuthors] = useState<string[]>([]);
     const [currentAuthor, setCurrentAuthor] = useState<string>('All');
@@ -127,7 +127,7 @@ const Fans: FC<ComponentProps> = ({ useWhite, serverUrl, classes }) => {
 
     useEffect(() => {
         const getMedia = async () => {
-            const data = await fetchData<Media[]>(`${serverUrl}/data/media.json`);
+            const data = await fetchData<Media[]>(apiRoutes.media);
             const initalMedia = shuffle<Media>(data);
             setMedia(initalMedia);
             setCurrentMedia(initalMedia);
@@ -136,7 +136,7 @@ const Fans: FC<ComponentProps> = ({ useWhite, serverUrl, classes }) => {
         };
         getMedia();
 
-    }, [serverUrl]);
+    }, []);
 
     useEffect(() => {
         let data;

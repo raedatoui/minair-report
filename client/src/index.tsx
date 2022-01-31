@@ -5,15 +5,7 @@ import './index.css';
 import { BrowserRouter } from 'react-router-dom';
 import App from './components/app';
 import { mainTheme } from './styles';
-import { AppConfiguration } from './types';
 import { AudioContext, makeAudio } from './utils';
-import { CDN } from './constants';
-
-const serverUrl = CDN;
-
-const config:AppConfiguration = {
-    serverUrl
-};
 
 const mainAudio = makeAudio(() => {});
 
@@ -22,7 +14,7 @@ ReactDOM.render(
         <BrowserRouter>
             <AudioContext.Provider value={mainAudio}>
                 <ThemeProvider theme={mainTheme}>
-                    <App config={config} />
+                    <App />
                 </ThemeProvider>
             </AudioContext.Provider>
         </BrowserRouter>
