@@ -3,9 +3,15 @@ import { WithStyles, withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import { Route, Switch, Redirect, RouteComponentProps } from 'react-router-dom';
-import { AppConfiguration, CurrentDataFrame, defaultDataFrame, Song, Video } from '../types';
+import {
+    CurrentDataFrame,
+    TrendsFrame,
+    defaultDataFrame,
+    Song,
+    Video, TrendsItem
+} from '../types';
 import { styles } from '../styles';
-import { audio as audioPath, CDN, logo, videos as videosPath } from '../constants';
+import { audio as audioPath, CDN, logo, videos as videosPath, apiRoutes } from '../constants';
 import { useInterval, fetchData, AudioContext } from '../utils';
 import ScrollToTop from './scrollToTop';
 import Current from './current';
@@ -19,9 +25,7 @@ import Footer from './footer';
 import Donate from './donate';
 import VideoPage from './video';
 
-interface Props extends WithStyles<typeof styles> {
-    config: AppConfiguration;
-}
+interface Props extends WithStyles<typeof styles> { }
 
 const backgrounds = [
     'lightGreen',
@@ -74,16 +78,16 @@ const videoList: Record<string, Video> = [
     }
 }), {});
 
-const App: FC<Props> = ({ config, classes }) => {
+const App: FC<Props> = ({ classes }) => {
     const audio = React.useContext(AudioContext);
 
     const [dataFrame, setDataFrame] = useState<CurrentDataFrame>();
+    const [trendsFrame, setTrendsFrame] = useState<TrendsFrame>();
     const [songs, setSongs] = useState<Song[]>([]);
     const [useWhite, setUseWhite] = useState<boolean>(false);
     const [isPlaying, setIsPlaying] = React.useState(false);
     const [currentIndex, setCurrentIndex] = React.useState(-1);
     const [showHeader, setShowHeader] = React.useState(true);
-
     const processDataFrame = (df:CurrentDataFrame) => {
         setDataFrame(df);
         setUseWhite((df?.aqiIdx25 ?? -1) > 0);
@@ -114,12 +118,19 @@ const App: FC<Props> = ({ config, classes }) => {
 
     useEffect(() => {
         const getSensorData = async () => {
-            const df = await fetchData<CurrentDataFrame>(`${config.serverUrl}/data/current.json`);
+            const df = await fetchData<CurrentDataFrame>(apiRoutes.current);
             if (!dataFrame || (df.timestamp > dataFrame?.timestamp))
                 processDataFrame(df);
         };
+        const getTrendsData = async () => {
+            const tf1 = await fetchData<TrendsItem>(apiRoutes.dayTrends);
+            const tf2 = await fetchData<TrendsItem>(apiRoutes.weekTrends);
+            setTrendsFrame({
+                day: tf1, week: tf2
+            });
+        };
         const getSongs = async () => {
-            const sg = await fetchData<Song[]>(`${config.serverUrl}/data/songs.json`);
+            const sg = await fetchData<Song[]>(apiRoutes.songs);
             setSongs(sg.map(s => ({
                 ...s,
                 filename: `${CDN}${audioPath}${s.filename}`
@@ -127,19 +138,28 @@ const App: FC<Props> = ({ config, classes }) => {
         };
 
         getSensorData();
+        getTrendsData();
         getSongs();
 
-    }, [config.serverUrl, dataFrame]);
+    }, [dataFrame]);
 
     useInterval(() => {
         const getSensorData = async () => {
-            const df = await fetchData<CurrentDataFrame>(`${config.serverUrl}/data/current.json`);
+            const df = await fetchData<CurrentDataFrame>(apiRoutes.current);
             if (!dataFrame || (df.timestamp > dataFrame?.timestamp))
                 processDataFrame(df);
         };
+        const getTrendsData = async () => {
+            const tf1 = await fetchData<TrendsItem>(apiRoutes.dayTrends);
+            const tf2 = await fetchData<TrendsItem>(apiRoutes.weekTrends);
+            setTrendsFrame({
+                day: tf1, week: tf2
+            });
+        };
         getSensorData();
+        getTrendsData();
         return true;
-    }, 30000, config.serverUrl);
+    }, 30000);
 
     // @ts-ignore
     document.getElementById('root').className = showHeader ? backgrounds[dataFrame?.aqiIdx25 ?? 0] : 'glitch';
@@ -174,6 +194,7 @@ const App: FC<Props> = ({ config, classes }) => {
                             <Route path="/current" exact>
                                 <Current
                                     dataFrame={dataFrame}
+                                    trendsFrame={trendsFrame}
                                     useWhite={useWhite}
                                     classes={classes}
                                 />
@@ -181,7 +202,6 @@ const App: FC<Props> = ({ config, classes }) => {
 
                             <Route path="/fans" exact>
                                 <Fans
-                                    serverUrl={config.serverUrl}
                                     useWhite={useWhite}
                                     classes={classes}
                                 />
@@ -189,7 +209,6 @@ const App: FC<Props> = ({ config, classes }) => {
 
                             <Route path="/fiction" exact>
                                 <Fiction
-                                    serverUrl={config.serverUrl}
                                     useWhite={useWhite}
                                     setShowHeader={setShowHeader}
                                     play={playUnderage}
@@ -200,7 +219,6 @@ const App: FC<Props> = ({ config, classes }) => {
                             <Route path="/trends" exact>
                                 <Trends
                                     currentDataFrame={dataFrame || defaultDataFrame}
-                                    serverUrl={config.serverUrl}
                                     classes={classes}
                                     useWhite={useWhite}
                                 />

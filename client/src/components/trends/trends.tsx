@@ -8,6 +8,7 @@ import Box from '@material-ui/core/Box';
 import { DataFrame, ComponentProps, chartCategories } from '../../types';
 import { fetchData } from '../../utils';
 import { Graph } from './graph';
+import { apiRoutes } from '../../constants';
 
 const timeLabels = [
     '1 hr',
@@ -18,18 +19,18 @@ const timeLabels = [
 ];
 
 const timeFiles = [
-    '1hour.json',
-    '6hour.json',
-    '12hour.json',
-    '24hour.json',
-    '1week.json'
+    'hour',
+    'sixHours',
+    'twelveHours',
+    'day',
+    'week'
 ];
 
 interface Props extends ComponentProps {
     currentDataFrame: DataFrame
 }
 
-const Charts:FC<Props> = ({ currentDataFrame, useWhite, serverUrl, classes }) => {
+const Charts:FC<Props> = ({ currentDataFrame, useWhite, classes }) => {
     const urlParams = new URLSearchParams(window.location.search);
     const param = urlParams.get('param') || 'aqi25';
 
@@ -38,7 +39,6 @@ const Charts:FC<Props> = ({ currentDataFrame, useWhite, serverUrl, classes }) =>
     const [xCats, setXCats] = useState<number[]>([]);
 
     const [timeRange, setTimeRange] = useState<string | null>('1 hr');
-    const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
     useEffect(() => {
         setXCats(olderXCats => ([
@@ -76,20 +76,12 @@ const Charts:FC<Props> = ({ currentDataFrame, useWhite, serverUrl, classes }) =>
 
     useEffect(() => {
         if (timeRange) {
-            setSelectedDate(null);
             const tf = timeFiles[timeLabels.indexOf(timeRange)];
-            const path = `${serverUrl}/data/${tf}`;
+            // @ts-ignore
+            const path = apiRoutes[tf];
             getSensorData(path);
         }
-    }, [serverUrl, timeRange]);
-
-    useEffect(() => {
-        if (selectedDate) {
-            setTimeRange(null);
-            const path = `${serverUrl}/api/day?day=${selectedDate}`;
-            getSensorData(path);
-        }
-    }, [serverUrl, selectedDate]);
+    }, [timeRange]);
 
     return (
         <div className={classes.chartsContainer}>

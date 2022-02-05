@@ -5,8 +5,22 @@ import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { AverageLabels, CurrentDataFrame, statLabels, StyledComponent } from '../../types';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
+import {
+    AverageLabels,
+    CurrentDataFrame,
+    statLabels,
+    StyledComponent,
+    TrendsFrame,
+    trendLabels,
+    TrendLabels
+} from '../../types';
 import { timestampToDate } from '../../utils';
 
 const getAverageLabel = (l: string) => {
@@ -20,10 +34,12 @@ const getAverageLabel = (l: string) => {
 
 interface Props extends RouteComponentProps, StyledComponent {
     dataFrame?: CurrentDataFrame
+    trendsFrame?: TrendsFrame
 }
 
-const Current: FC<Props> = ({ history, useWhite, dataFrame, classes }) => {
+const trendCellWidth = 70;
 
+const Current: FC<Props> = ({ history, useWhite, dataFrame, trendsFrame, classes }) => {
     const catColorMapping = [
         classes.lightGreen,
         classes.yellow,
@@ -56,7 +72,10 @@ const Current: FC<Props> = ({ history, useWhite, dataFrame, classes }) => {
                         </Typography>
                         <Grid item xs={12} sm={12} className={classes.card}>
                             <Card
-                                className={`${classes.root} ${classes.cardBubble} ${catColorMapping[dataFrame.aqiIdx25 || 0]} ${whiteBox}`}
+                                className={`
+                                    ${classes.cardBubble}
+                                    ${catColorMapping[dataFrame.aqiIdx25 || 0]}
+                                    ${whiteBox}`}
                                 variant="outlined"
                                 onClick={() => history.push('/trends?param=aqi25')}
                             >
@@ -88,11 +107,10 @@ const Current: FC<Props> = ({ history, useWhite, dataFrame, classes }) => {
                             </Card>
                         </Grid>
 
-                        <Grid item xs={12} sm={6} className={`${classes.card} ${classes.row2}`}>
+                        <Grid item xs={12} sm={6} className={classes.card}>
                             <Card
                                 variant="outlined"
                                 className={`
-                                ${classes.root} 
                                 ${classes.cardBubble} 
                                 ${classes.card2} 
                                 ${catColorMapping[dataFrame.aqiIdx100 || 0]} ${whiteBox}`}
@@ -115,45 +133,69 @@ const Current: FC<Props> = ({ history, useWhite, dataFrame, classes }) => {
                             </Card>
                         </Grid>
 
-                        <Grid item xs={12} sm={6} className={`${classes.card} ${classes.row2}`}>
-                            <Card className={`${classes.root} ${classes.cardBubble} ${classes.cardContainer} ${whiteBox}`} variant="outlined">
+                        <Grid item xs={12} sm={6} className={classes.card}>
+                            <Card
+                                variant="outlined"
+                                className={`
+                                ${classes.cardBubble} 
+                                ${classes.card2} 
+                                ${catColorMapping[dataFrame.aqiIdx100 || 0]} ${whiteBox}`}
+                            >
+                                <CardContent>
+                                    <TableContainer style={{ padding: 5 }}>
+                                        <Table aria-label="trends table">
+                                            <TableHead>
+                                                <TableRow>
+                                                    <TableCell>METRIC</TableCell>
+                                                    <TableCell style={{ width: trendCellWidth }} align="center">DAY</TableCell>
+                                                    <TableCell style={{ width: trendCellWidth }} align="center">WEEK</TableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
+                                                { trendLabels.map((k) => (
+                                                    <TableRow
+                                                        key={k}
+                                                    >
+                                                        <TableCell style={{ fontWeight: 500 }}>
+                                                            { TrendLabels[k] }
+                                                        </TableCell>
+                                                        <TableCell style={{ width: trendCellWidth }} align="center">
+                                                            {
+                                                                Math.round((trendsFrame?.day?.[k] ?? 0) * 100)
+                                                            }%
+                                                        </TableCell>
+                                                        <TableCell style={{ width: trendCellWidth }} align="center">
+                                                            {
+                                                                Math.round((trendsFrame?.week?.[k] ?? 0) * 100)
+                                                            }%
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+
+                        <Grid item xs={12} sm={6} md={3} className={classes.card}>
+                            <Card
+                                className={`${classes.cardBubble} ${classes.cardContainer} ${whiteBox}`}
+                                variant="outlined"
+                            >
                                 <CardContent className={classes.gray}>
                                     <Typography variant="h5" component="h2">
                                         Other Concentrations
                                     </Typography>
                                     <Typography
-                                        variant="h6"
+                                        variant="body2"
                                         component="h3"
                                         onClick={() => history.push('/trends?param=pm10')}
                                     >
-                                        {'Particles >=1.0µm: count/dl:'} { dataFrame.pm10 }
-                                    </Typography>
-                                    <Typography
-                                        variant="h6"
-                                        component="h3"
-                                        onClick={() => history.push('/trends?param=umCount03')}
-                                    >
-                                        Raw PM0.3 in µg/m³: { dataFrame.umCount03 }
-                                    </Typography>
-                                    <Typography
-                                        variant="h6"
-                                        component="h3"
-                                        onClick={() => history.push('/trends?param=umCount05')}
-                                    >
-                                        Raw PM0.5 in µg/m³: { dataFrame.umCount05 }
-                                    </Typography>
-                                    <Typography
-                                        variant="h6"
-                                        component="h3"
-                                        onClick={() => history.push('/trends?param=umCount10')}
-                                    >
-                                        Raw PM1.0 in µg/m³: { dataFrame.umCount10 }
-                                    </Typography>
-                                    <Typography
-                                        variant="h6"
-                                        component="h3"
-                                        onClick={() => history.push('/trends?param=umCount50')}
-                                    >
+                                        {'Particles >=1.0µm: count/dl:'} { dataFrame.pm10 }<br />
+                                        Raw PM0.3 in µg/m³: { dataFrame.umCount03 }<br />
+                                        Raw PM0.5 in µg/m³: { dataFrame.umCount05 }<br />
+                                        Raw PM1.0 in µg/m³: { dataFrame.umCount10 }<br />
                                         Raw PM5.0 in µg/m³: { dataFrame.umCount50 }
                                     </Typography>
                                 </CardContent>
@@ -162,7 +204,7 @@ const Current: FC<Props> = ({ history, useWhite, dataFrame, classes }) => {
 
                         <Grid item xs={12} sm={6} md={3} className={classes.card}>
                             <Card
-                                className={`${classes.root} ${classes.cardBubble} ${classes.cardContainer} ${whiteBox}`}
+                                className={`${classes.cardBubble} ${classes.cardContainer} ${whiteBox}`}
                                 variant="outlined"
                                 onClick={() => history.push('/trends?param=temperature')}
                             >
@@ -179,7 +221,7 @@ const Current: FC<Props> = ({ history, useWhite, dataFrame, classes }) => {
 
                         <Grid item xs={12} sm={6} md={3} className={classes.card}>
                             <Card
-                                className={`${classes.root} ${classes.cardBubble} ${classes.cardContainer} ${whiteBox}`}
+                                className={`${classes.cardBubble} ${classes.cardContainer} ${whiteBox}`}
                                 variant="outlined"
                                 onClick={() => history.push('/trends?param=humidity')}
                             >
@@ -194,9 +236,9 @@ const Current: FC<Props> = ({ history, useWhite, dataFrame, classes }) => {
                             </Card>
                         </Grid>
 
-                        <Grid item xs={12} sm={6} md={6} className={classes.card}>
+                        <Grid item xs={12} sm={6} md={3} className={classes.card}>
                             <Card
-                                className={`${classes.root} ${classes.cardBubble} ${classes.cardContainer} ${whiteBox}`}
+                                className={`${classes.cardBubble} ${classes.cardContainer} ${whiteBox}`}
                                 variant="outlined"
                                 onClick={() => history.push('/trends?param=pressure')}
                             >
