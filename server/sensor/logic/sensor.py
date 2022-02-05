@@ -2,14 +2,16 @@ import json
 import requests
 import math
 from datetime import datetime
+from sensor import config
 from sensor.utils.exceptions import MinairError
 from sensor.models import sensor_point
 from google.cloud import storage
 from sensor.utils.api_utils import convert_json
 from sensor.utils.datetime_json_encoder import Encoder
 
+
 client = storage.Client()
-bucket = client.get_bucket('minair.me')
+bucket = client.get_bucket('www.minair.me')
 
 db_fields = {
     "humidity_a": "humidity",
@@ -37,12 +39,10 @@ stats_fields = [
     "time_stamp"
 ]
 
-X_API_KEY = '716D4201-7C46-11EB-8C3A-42010A800259'
-
 SENSOR_ID = 87629
 
 HEADERS = {
-    'X-API-KEY': X_API_KEY,
+    'X-API-KEY': config.X_API_KEY,
     'Content-Type': 'application/json'
 }
 
@@ -142,12 +142,36 @@ def save_measurement():
     data = r.json()
     sensor = data['sensor']
     m = save(sensor)
+
     upload_file('current.json', sensor_point.latest())
     upload_file('1hour.json', sensor_point.get_trends(1))
     upload_file('6hour.json', sensor_point.get_trends(6))
     upload_file('12hour.json', sensor_point.get_trends(12))
-    upload_file('24hour.json', sensor_point.get_trends(24))
-    upload_file('1week.json', sensor_point.get_trends(168))
+
+    day_data = sensor_point.get_trends(24)
+    day_len = len(day_data)
+    day_percentages = {
+        'aqi_2_5': compute_averages(day_data, day_len, 'aqi_2_5', 50),
+        'aqi_10_0': compute_averages(day_data, day_len, 'aqi_10_0', 50),
+        'temperature': compute_averages(day_data, day_len, 'temperature', 75),
+        'pressure': compute_averages(day_data, day_len, 'pressure', 30.0),
+        'humidity': compute_averages_range(day_data, day_len, 'humidity', 40, 60)
+    }
+    upload_file('24hour.json', day_data)
+    upload_file('24htrends.json', day_percentages)
+
+    week_data = sensor_point.get_trends(168)
+    week_len = len(week_data)
+    week_percentages = {
+        'aqi_2_5': compute_averages(week_data, week_len, 'aqi_2_5', 50),
+        'aqi_10_0': compute_averages(week_data, week_len, 'aqi_10_0', 50),
+        'temperature': compute_averages(week_data, week_len, 'temperature', 75),
+        'pressure': compute_averages(week_data, week_len, 'pressure', 30.0),
+        'humidity': compute_averages_range(week_data, week_len, 'humidity', 40, 60)
+    }
+    upload_file('1weektrends.json', week_percentages)
+    upload_file('1week.json', week_data)
+
     return m
 
 
@@ -198,8 +222,30 @@ def get_top(param, count):
     return sensor_point.get_top(param, count)
 
 
-def get_day(day):
-    return sensor_point.get_by_date(day)
+def get_day():
+    day_data = sensor_point.get_trends(24)
+    day_len = len(day_data)
+    day_percentages = {
+        'aqi_2_5': compute_averages(day_data, day_len, 'aqi_2_5', 50),
+        'aqi_10_0': compute_averages(day_data, day_len, 'aqi_10_0', 50),
+        'temperature': compute_averages(day_data, day_len, 'temperature', 75),
+        'pressure': compute_averages(day_data, day_len, 'pressure', 30.0),
+        'humidity': compute_averages_range(day_data, day_len, 'humidity', 40, 60)
+    }
+    return day_percentages
+
+
+def get_week():
+    week_data = sensor_point.get_trends(168)
+    week_len = len(week_data)
+    week_percentages = {
+        'aqi_2_5': compute_averages(week_data, week_len, 'aqi_2_5', 50),
+        'aqi_10_0': compute_averages(week_data, week_len, 'aqi_10_0', 50),
+        'temperature': compute_averages(week_data, week_len, 'temperature', 75),
+        'pressure': compute_averages(week_data, week_len, 'pressure', 30.0),
+        'humidity': compute_averages_range(week_data, week_len, 'humidity', 40, 60)
+    }
+    return week_percentages
 
 
 def upload_file(filename, content):
@@ -207,3 +253,13 @@ def upload_file(filename, content):
     blob = bucket.blob('data/{}'.format(filename))
     blob.cache_control = 'no-store, max-age=0'
     blob.upload_from_string(data, content_type='application/json')
+
+
+def compute_averages(data_range, total, param, threshold):
+   under = [x for x in data_range if x[param] < threshold]
+   return len(under) / total
+
+
+def compute_averages_range(data_range, total, param, threshold1, threshold2):
+   under = [x for x in data_range if threshold2 > x[param] > threshold1]
+   return len(under) / total
