@@ -24,6 +24,20 @@ export const mainTheme = createTheme({
                 },
             },
         },
+        MuiCardContent: {
+            root: {
+                '&:last-child': {
+                    paddingBottom: '16px',
+                }
+            }
+        },
+        MuiTableCell: {
+            root: {
+                borderBottom: 'none !important',
+                padding: '4px',
+                fontSize: '1rem'
+            }
+        }
     },
 });
 
@@ -51,7 +65,7 @@ const containerPadding = '40px';
 
 export const styles = (theme: Theme) => createStyles({
     root: {
-        flexGrow: 1,
+        flexGrow: 1
     },
     '@keyframes fadeIn': {
         from: {
@@ -73,6 +87,7 @@ export const styles = (theme: Theme) => createStyles({
     bold: {
         fontWeight: 700
     },
+
     whiteBox: {
         '& h1': {
             color: 'white'
@@ -91,6 +106,11 @@ export const styles = (theme: Theme) => createStyles({
         },
         '& div': {
             color: 'white'
+        },
+        '& li[class*="App-yellowFull"]': {
+            '& p': {
+                color: 'black !important'
+            }
         }
     },
     lightGreen: {
@@ -115,7 +135,7 @@ export const styles = (theme: Theme) => createStyles({
         backgroundColor: 'rgba(0, 224, 0, 1)'
     },
     yellowFull: {
-        backgroundColor: 'rgba(255, 255, 0, 1)',
+        backgroundColor: 'rgba(255, 255, 0, 1)'
     },
     orangeFull: {
         backgroundColor: 'rgba(255, 118, 0, 1)'
@@ -159,29 +179,28 @@ export const styles = (theme: Theme) => createStyles({
     },
     cardBubble: {
         borderRadius: '60px',
-        boxShadow: '0 14px 28px rgb(0 0 0 / 25%), 0 10px 10px rgb(0 0 0 / 22%)'
+        boxShadow: '0 14px 28px rgb(0 0 0 / 25%), 0 10px 10px rgb(0 0 0 / 22%)',
+        height: '100%'
     },
     card: {
         width: '100%',
         padding: theme.spacing(1),
         textAlign: 'center',
-        color: theme.palette.text.secondary,
-        backgroundColor: 'none',
+        color: theme.palette.text.secondary
     },
     card2: {
         height: '100%',
-    },
-    row2: {
-        minHeight: '250px'
-    },
-    pressureHack: {
         display: 'flex',
+        justifyContent: 'center',
+        flexFlow: 'column'
     },
     gray: {
         backgroundImage: candyGradient,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
+        height: '100%',
+        padding: '0'
     },
     currentContainer: {
         margin: '0',

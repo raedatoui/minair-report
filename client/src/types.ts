@@ -1,10 +1,6 @@
 import { WithStyles } from '@material-ui/core/styles';
 import { styles } from './styles';
 
-export type AppConfiguration = {
-    serverUrl: string
-};
-
 export type StatItem = {
     value: number;
     aqi: number;
@@ -13,7 +9,6 @@ export type StatItem = {
 };
 
 export enum AverageLabels {
-    'pm25' = 'Now',
     'pm2510Minute' = '10 min',
     'pm2530Minute' = '30 min',
     'pm2560Minute' = '1 hr',
@@ -21,10 +16,6 @@ export enum AverageLabels {
     'pm2524Hour' = '24 hrs',
     'pm251Week' = '1 week'
 }
-
-export type AverageMapping = {
-    [key in keyof typeof AverageLabels]: string;
-};
 
 export const statLabels = [
     'pm2510Minute',
@@ -34,6 +25,22 @@ export const statLabels = [
     'pm2524Hour',
     'pm251Week',
 ] as const;
+
+export const trendLabels = [
+    'aqi25',
+    'aqi100',
+    'temperature',
+    'pressure',
+    'humidity'
+] as const;
+
+export enum TrendLabels {
+    'aqi25' = 'AQI 2.5 < 50',
+    'aqi100' = 'AQI 10.0 < 50',
+    'temperature' = 'Temperature < 75° F',
+    'pressure' = 'Pressure < 30hg',
+    'humidity' = 'Humidity 40% - 60%'
+}
 
 export type DataFrame = {
     id: number,
@@ -62,6 +69,19 @@ export type CurrentDataFrame = DataFrame & {
     stats: {
         [key in keyof typeof AverageLabels]: StatItem
     }
+};
+
+export type TrendsItem = {
+    aqi25: number;
+    aqi100: number;
+    temperature: number;
+    pressure: number;
+    humidity: number;
+};
+
+export type TrendsFrame = {
+    day: TrendsItem;
+    week: TrendsItem;
 };
 
 export const defaultDataFrame:DataFrame = {
@@ -105,9 +125,7 @@ export interface StyledComponent extends WithStyles<typeof styles> {
     useWhite: boolean
 }
 
-export interface ComponentProps extends StyledComponent {
-    serverUrl: string
-}
+export interface ComponentProps extends StyledComponent { }
 
 export const chartCategories: Record<string, string> = {
     humidity: 'Humidity %',
@@ -124,10 +142,6 @@ export const chartCategories: Record<string, string> = {
     umCount100: 'Raw PM10.0 in µg/m³',
     aqi25: 'Average US EPA PM2.5 AQI',
     aqi100: 'Average US EPA PM10.0 AQI'
-};
-
-export type ChartData = {
-    items: DataFrame[]
 };
 
 export type Song = {
