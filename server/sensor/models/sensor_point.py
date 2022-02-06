@@ -129,11 +129,11 @@ def create_measurement(data):
         if record:
             latest = record.to_dict()
             if latest['timestamp'] == data['timestamp']:
-                return latest
+                return latest, False
         measurement = Measurement(**data)
         session.add(measurement)
         session.flush()
-        return measurement.to_dict()
+        return measurement.to_dict(), True
 
 
 def latest():
