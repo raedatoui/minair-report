@@ -1,2 +1,2 @@
 #!/bin/bash
-curl http://localhost:5000/api/save
+curl http://192.168.1.14/api/save
