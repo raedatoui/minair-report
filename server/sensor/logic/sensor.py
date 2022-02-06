@@ -141,38 +141,39 @@ def save_measurement():
     print(r.status_code)
     data = r.json()
     sensor = data['sensor']
-    m = save(sensor)
+    latest, new = save(sensor)
+    print(new)
+    if new:
+        upload_file('current.json', latest)
+        upload_file('1hour.json', sensor_point.get_trends(1))
+        upload_file('6hour.json', sensor_point.get_trends(6))
+        upload_file('12hour.json', sensor_point.get_trends(12))
 
-    upload_file('current.json', sensor_point.latest())
-    upload_file('1hour.json', sensor_point.get_trends(1))
-    upload_file('6hour.json', sensor_point.get_trends(6))
-    upload_file('12hour.json', sensor_point.get_trends(12))
+        day_data = sensor_point.get_trends(24)
+        day_len = len(day_data)
+        day_percentages = {
+            'aqi_2_5': compute_averages(day_data, day_len, 'aqi_2_5', 50),
+            'aqi_10_0': compute_averages(day_data, day_len, 'aqi_10_0', 50),
+            'temperature': compute_averages(day_data, day_len, 'temperature', 75),
+            'pressure': compute_averages(day_data, day_len, 'pressure', 30.0),
+            'humidity': compute_averages_range(day_data, day_len, 'humidity', 40, 60)
+        }
+        upload_file('24hour.json', day_data)
+        upload_file('24htrends.json', day_percentages)
 
-    day_data = sensor_point.get_trends(24)
-    day_len = len(day_data)
-    day_percentages = {
-        'aqi_2_5': compute_averages(day_data, day_len, 'aqi_2_5', 50),
-        'aqi_10_0': compute_averages(day_data, day_len, 'aqi_10_0', 50),
-        'temperature': compute_averages(day_data, day_len, 'temperature', 75),
-        'pressure': compute_averages(day_data, day_len, 'pressure', 30.0),
-        'humidity': compute_averages_range(day_data, day_len, 'humidity', 40, 60)
-    }
-    upload_file('24hour.json', day_data)
-    upload_file('24htrends.json', day_percentages)
+        week_data = sensor_point.get_trends(168)
+        week_len = len(week_data)
+        week_percentages = {
+            'aqi_2_5': compute_averages(week_data, week_len, 'aqi_2_5', 50),
+            'aqi_10_0': compute_averages(week_data, week_len, 'aqi_10_0', 50),
+            'temperature': compute_averages(week_data, week_len, 'temperature', 75),
+            'pressure': compute_averages(week_data, week_len, 'pressure', 30.0),
+            'humidity': compute_averages_range(week_data, week_len, 'humidity', 40, 60)
+        }
+        upload_file('1weektrends.json', week_percentages)
+        upload_file('1week.json', week_data)
 
-    week_data = sensor_point.get_trends(168)
-    week_len = len(week_data)
-    week_percentages = {
-        'aqi_2_5': compute_averages(week_data, week_len, 'aqi_2_5', 50),
-        'aqi_10_0': compute_averages(week_data, week_len, 'aqi_10_0', 50),
-        'temperature': compute_averages(week_data, week_len, 'temperature', 75),
-        'pressure': compute_averages(week_data, week_len, 'pressure', 30.0),
-        'humidity': compute_averages_range(week_data, week_len, 'humidity', 40, 60)
-    }
-    upload_file('1weektrends.json', week_percentages)
-    upload_file('1week.json', week_data)
-
-    return m
+    return latest
 
 
 def save(pt):
@@ -207,8 +208,7 @@ def save(pt):
                 'cat_idx': i
             }
     o['stats'] = formatted_stats
-    m = sensor_point.create_measurement(o)
-    return m
+    return sensor_point.create_measurement(o)
 
 
 def get_trends(count):
