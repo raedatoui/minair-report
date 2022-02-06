@@ -1,7 +1,7 @@
 """Application Handlers.
 """
 
-from flask import jsonify, render_template, request, send_from_directory
+from flask import jsonify, request
 from werkzeug.exceptions import HTTPException
 
 from sensor import config
@@ -11,7 +11,7 @@ from sensor.utils import response
 from sensor.utils.exceptions import MinairError
 from sensor.utils.datetime_json_encoder import Encoder
 from sensor.logic import sensor
-from sensor.logic import fans
+from sensor.logic import content
 
 
 def responsify_and_flaskify_success(message):
@@ -26,24 +26,28 @@ def health():
 
 
 # content
+@app.route('/')
+def get_homepage():
+    return responsify_and_flaskify_success({'works': True})
+
 @app.route('/api/fiction')
 def get_fiction():
-    return responsify_and_flaskify_success(fans.get_fiction())
+    return responsify_and_flaskify_success(content.get_fiction())
 
 
 @app.route('/api/media')
 def get_media():
-    return responsify_and_flaskify_success(fans.get_media())
+    return responsify_and_flaskify_success(content.get_media())
 
 
 @app.route('/api/songs')
 def get_songs():
-    return responsify_and_flaskify_success(fans.get_songs())
+    return responsify_and_flaskify_success(content.get_songs())
 
 
 @app.route('/api/videos')
 def get_videos():
-    return responsify_and_flaskify_success(fans.get_videos())
+    return responsify_and_flaskify_success(content.get_videos())
 
 
 # sensor
@@ -131,6 +135,6 @@ def exception_handler(error):
 
 
 @app.after_request
-def after_request(response):
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    return response
+def after_request(resp):
+    resp.headers.add('Access-Control-Allow-Origin', '*')
+    return resp
