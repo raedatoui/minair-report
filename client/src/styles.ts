@@ -111,6 +111,12 @@ export const styles = (theme: Theme) => createStyles({
             '& p': {
                 color: 'black !important'
             }
+        },
+        '& th': {
+            color: 'white'
+        },
+        '& td': {
+            color: 'white'
         }
     },
     lightGreen: {
