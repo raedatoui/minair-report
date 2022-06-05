@@ -1,12 +1,12 @@
-import { createMuiTheme, unstable_createMuiStrictModeTheme, createStyles, Theme } from '@material-ui/core/styles';
+import { createTheme, unstable_createMuiStrictModeTheme, createStyles, Theme } from '@material-ui/core/styles';
 
-const createTheme = process.env.NODE_ENV === 'production' ? createMuiTheme : unstable_createMuiStrictModeTheme;
+const themeCreator = process.env.NODE_ENV === 'production' ? createTheme : unstable_createMuiStrictModeTheme;
 
 const defaultTheme = createTheme();
 const purpleAir = 'rgb(170, 68, 170)';
 const purpleAirTr = 'rgba(170, 68, 170, 0.8)';
 
-export const mainTheme = createTheme({
+export const mainTheme = themeCreator({
     palette: {
         primary: {
             main: purpleAir,
@@ -65,7 +65,8 @@ const containerPadding = '40px';
 
 export const styles = (theme: Theme) => createStyles({
     root: {
-        flexGrow: 1
+        flexGrow: 1,
+        color: 'white'
     },
     '@keyframes fadeIn': {
         from: {
@@ -540,6 +541,7 @@ export const styles = (theme: Theme) => createStyles({
             fontSize: '2rem'
         }
     },
+
     donateIconPlace: {
         opacity: 0,
         '&.visible': {
@@ -553,7 +555,6 @@ export const styles = (theme: Theme) => createStyles({
             display: 'none',
         }
     },
-
     donateText: {
         marginTop: containerPadding,
         marginBottom: containerPadding,
@@ -569,7 +570,18 @@ export const styles = (theme: Theme) => createStyles({
         '&.small': {
             fontSize: '2rem'
         }
-    }
+    },
+
+    videoList: {
+        marginTop: containerPadding,
+        marginBottom: containerPadding,
+        padding: '16px'
+    },
+    videoTitle2: {
+        textDecoration: 'none',
+        textAlign: 'center',
+        color: 'black'
+    },
 });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

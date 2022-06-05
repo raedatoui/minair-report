@@ -13,7 +13,6 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Modal from '@material-ui/core/Modal';
 import Avatar from '@material-ui/core/Avatar';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { styles } from '../../styles';
 import { Fiction as FictionType, StyledComponent, ComponentProps } from '../../types';
 import { fetchData } from '../../utils';
@@ -36,7 +35,8 @@ const FictionItemInner: FC<Story> = ({ useWhite, fiction, classes }) => {
                 <TimelineConnector />
             </TimelineSeparator>
             <TimelineContent className={`${classes.fictionCopy} ${classes.fictionChapterContainer} ${whiteBox}`}>
-                <div className={classes.timelineChapter}>{fiction.chapter}</div>
+                {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */}
+                <div className={classes.timelineChapter} onClick={() => setSelected(!selected)}>{fiction.chapter}</div>
                 { selected && (
                     <Paper
                         elevation={2}
@@ -62,7 +62,7 @@ const getModalStyle = () => {
     };
 };
 
-interface Props extends RouteComponentProps, ComponentProps {
+interface Props extends ComponentProps {
     setShowHeader: (s: boolean) => void,
     play: () => void,
 }
@@ -90,18 +90,23 @@ const Fiction:FC<Props> = ({ setShowHeader, useWhite, play, classes }) => {
             const data = await fetchData<FictionType[]>(apiRoutes.fiction);
             setFiction(data);
         };
-        getFiction();
+        // eslint-disable-next-line no-console
+        getFiction().catch(console.error);
 
     }, []);
 
     return (
         <div className={classes.fictionContainer}>
-            <Typography className={classes.fictionHeadline} variant="h4" component="h2" gutterBottom>
-                The Minair Affair: <br />An Erotic Fan Fiction Journey of Longing, Lust, and Air Quality
-            </Typography>
-            <Timeline className={classes.timeline}>
-                { fiction.map(f => (<FictionItem key={f.chapter} useWhite={useWhite} fiction={f} />))}
-            </Timeline>
+            {!open && (
+                <>
+                    <Typography className={classes.fictionHeadline} variant="h4" component="h2" gutterBottom>
+                        The Minair Affair: <br />An Erotic Fan Fiction Journey of Longing, Lust, and Air Quality
+                    </Typography>
+                    <Timeline className={classes.timeline}>
+                        { fiction.map(f => (<FictionItem key={f.chapter} useWhite={useWhite} fiction={f} />))}
+                    </Timeline>
+                </>
+            )}
             <Modal
                 id="fiction-modal"
                 open={open}
@@ -129,4 +134,4 @@ const Fiction:FC<Props> = ({ setShowHeader, useWhite, play, classes }) => {
     );
 };
 
-export default withRouter(Fiction);
+export default Fiction;

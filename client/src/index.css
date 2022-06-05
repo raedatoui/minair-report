@@ -43,3 +43,11 @@ p {
 div[role=presentation].MuiPopover-root {
     background-color: rgba(0,0,0,0);
 }
+
+.MuiInputBase-input {
+    color: white !important;
+}
+
+.MuiInput-underline::before {
+    border-bottom-color: white !important;
+}
