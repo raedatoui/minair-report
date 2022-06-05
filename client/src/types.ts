@@ -159,6 +159,7 @@ export type Rect = {
 
 export type Video = {
     title: string,
+    htmlTitle: string,
     video: string,
     poster: string,
     path: string
