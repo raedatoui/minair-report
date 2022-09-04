@@ -75,6 +75,7 @@ const VideosPage:FC<Props> = ({ history, videoPass, setVideoPass, classes, items
                 onClose={handleClose}
                 aria-labelledby="miniar-fiction-age-verification"
                 disableEscapeKeyDown
+                disableBackdropClick
                 disableAutoFocus
                 BackdropProps={{
                     classes: {

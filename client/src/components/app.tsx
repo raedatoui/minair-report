@@ -63,7 +63,7 @@ const videoList: Record<string, Video> = [
     },
     {
         title: 'Cock Club Initiation',
-        htmlTitle: 'Clock Club<br>Initiation',
+        htmlTitle: 'Cock Club<br>Initiation',
         video: 'cock-club-initiation.mp4',
         poster: 'cock-club-initiation.png',
         path: 'cock-club-initiation'
@@ -74,6 +74,13 @@ const videoList: Record<string, Video> = [
         video: 'minair-erotica-readings.mp4',
         poster: 'dark-poster.jpg',
         path: 'erotica-readings'
+    },
+    {
+        title: 'Minair Rap n\' Roll',
+        htmlTitle: 'Minair<br>Rap n\' Roll',
+        video: 'minair-rap-n-roll.mp4',
+        poster: 'dark-poster.jpg',
+        path: 'rap-n-roll'
     }
 ].reduce((acc, v) => ({
     ...acc,
