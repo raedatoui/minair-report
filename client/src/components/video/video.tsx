@@ -15,7 +15,8 @@ const VideoPage: FC<Props> = ({ video, classes }) => {
     gtag('pageview', video.path);
     return (
         <Container className={classes.videoContainer}>
-            <video preload="none" src={video.video} controls poster={video.poster} autoPlay>
+            <video preload="auto" controls poster={video.poster} autoPlay>
+                <source src={video.video} type="video/mp4" />
                 |<track kind="captions" />
             </video>
             <Typography
