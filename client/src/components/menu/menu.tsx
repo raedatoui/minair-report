@@ -25,8 +25,6 @@ const Menu: FC<Props> = ({ currentIndex, play, songs, history, classes }) => {
 
     const audioRef2 = useRef(makeAudio(() => {}, `${CDN}${audioPath}minair-mission-statement.wav`));
 
-    const songPosition = currentIndex + 1 >= songs.length ? songs.length - 1 : currentIndex + 1;
-
     const navigate = (url: string) => {
         history.push(url);
         // @ts-ignore
@@ -34,6 +32,9 @@ const Menu: FC<Props> = ({ currentIndex, play, songs, history, classes }) => {
     };
 
     const handleJingle = () => {
+        let songPosition = currentIndex + 1;
+        if (songPosition === songs.length)
+            songPosition = 0;
         // @ts-ignore
         gtag('event', songs[songPosition].title);
         play(songPosition);
@@ -106,7 +107,7 @@ const Menu: FC<Props> = ({ currentIndex, play, songs, history, classes }) => {
                     icon={(
                         <Avatar
                             className={clsx(classes.menuIcon, { large: matches, xlarge: xmatches })}
-                            src={`${CDN}${menuPath}${songs[songPosition]?.icon ?? 'jingle.png'}`}
+                            src={`${CDN}${menuPath}${songs[currentIndex]?.icon ?? 'jingle.png'}`}
                             variant="square"
                         />
                     )}
