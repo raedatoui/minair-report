@@ -14,7 +14,7 @@ const suffix = dev ? '' : '.json';
 export const apiRoutes = {
     songs: `${serverUrl}/${api}/songs${suffix}`,
     media: `${serverUrl}/${api}/media${suffix}`,
-    fiction: `${serverUrl}/${api}/fiction${suffix}`,
+    fiction: `${serverUrl}/${api}/erotic-fiction${suffix}`,
     videos: `${serverUrl}/${api}/videos${suffix}`,
     current: `${serverUrl}/${api}/current${suffix}`,
     hour: `${serverUrl}/${api}/1hour${suffix}`,
