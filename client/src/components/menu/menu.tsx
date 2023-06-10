@@ -62,7 +62,7 @@ const Menu: FC<Props> = ({ currentIndex, play, songs, history, classes }) => {
                 { transform: `translate(-${x / (3 * offset) + Math.random() * (x / 2)}px, -${y * (2 / 6)}px) scale(1.25)` },
                 { transform: 'translate(0,0px) scale(1)' }
             ];
-            donateRef?.current?.animate(transforms, { duration: 7000, iterations: 1 });
+            donateRef?.current?.animate(transforms, { duration: 2500, iterations: 1 });
         }
     }, [donateRef, donateSrcRef, animate]);
 
@@ -176,6 +176,31 @@ const Menu: FC<Props> = ({ currentIndex, play, songs, history, classes }) => {
                                 variant="square"
                             />
                         </>
+                    )}
+                />
+                <BottomNavigationAction
+                    onClick={() => window.open(
+                        'https://vote.webbyawards.com/PublicVoting#/2023/websites-and-mobile-sites/general-websites-and-mobile-sites/weird?honoree',
+                        '_blank'
+                    )}
+                    label=""
+                    icon={(
+                        <Avatar
+                            className={clsx(classes.menuIcon, { large: matches, xlarge: xmatches })}
+                            src={`${CDN}${menuPath}webby-honoree-badge.webp`}
+                            variant="square"
+                        />
+                    )}
+                />
+                <BottomNavigationAction
+                    onClick={() => navigate('minair-seminair')}
+                    label=""
+                    icon={(
+                        <Avatar
+                            className={clsx(classes.menuIcon, { large: matches, xlarge: xmatches })}
+                            src={`${CDN}${menuPath}about2.png`}
+                            variant="square"
+                        />
                     )}
                 />
             </BottomNavigation>
