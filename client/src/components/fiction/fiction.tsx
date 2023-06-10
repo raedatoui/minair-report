@@ -110,15 +110,16 @@ const Fiction:FC<Props> = ({ setShowHeader, useWhite, play, classes }) => {
             <Modal
                 id="fiction-modal"
                 open={open}
-                onClose={handleClose}
                 aria-labelledby="miniar-fiction-age-verification"
-                disableBackdropClick
                 disableEscapeKeyDown
                 disableAutoFocus
                 BackdropProps={{
                     classes: {
                         root: classes.backDrop
                     }
+                }}
+                onClose={(event, reason) => {
+                    if (reason !== 'backdropClick') handleClose();
                 }}
             >
                 <div style={modalStyle} className={classes.modal}>

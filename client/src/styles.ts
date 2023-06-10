@@ -246,7 +246,8 @@ export const styles = (theme: Theme) => createStyles({
         backgroundColor: 'rgba(0,0,0,0)',
         height: 'inherit',
         display: 'flex',
-        alignItems: 'center'
+        alignItems: 'center',
+        justifyContent: 'space-around',
     },
     menuItem: {
         flex: '0 32%',
@@ -313,7 +314,8 @@ export const styles = (theme: Theme) => createStyles({
         padding: '12px 0 0 0'
     },
     timelineDot: {
-        backgroundColor: 'rgba(0,0,0,0)'
+        backgroundColor: 'rgba(0,0,0,0)',
+        cursor: 'pointer',
     },
     timelineItem: {
         '&:before': {
@@ -327,7 +329,8 @@ export const styles = (theme: Theme) => createStyles({
         color: 'black',
         fontWeight: 700,
         marginBottom: '10px',
-        paddingLeft: '12px'
+        paddingLeft: '12px',
+        cursor: 'pointer'
     },
     timelinePaper: {
         backgroundColor: 'rgba(0,0,0,0)',
