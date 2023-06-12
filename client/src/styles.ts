@@ -113,6 +113,11 @@ export const styles = (theme: Theme) => createStyles({
                 color: 'black !important'
             }
         },
+        '& li[class*="jss13"]': {
+            '& p': {
+                color: 'black !important'
+            }
+        },
         '& th': {
             color: 'white'
         },
