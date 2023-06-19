@@ -15,19 +15,21 @@ https://minair.me/minair-seminair
 
 
 ## Stack
-Flask app running on a Raspberry Pi 4. The backend reads the sensor data and continously pushes JSON files to a Google Cloud Storage bucket. A cron job on the Pi calls the Flask API endpoint every minute. The endpoint does a few things:
+Flask app running on a Raspberry Pi. The backend reads the PurpleAir sensor data and continously pushes JSON files to a Google Cloud Storage bucket. A cron job on the Pi calls the Flask API endpoint every minute. The endpoint does a few things:
 * reads the latest sensor data
 * stores it in the database
-* calculates a few windowed averages: 1 hour, 6 hours, 12 hours, 24 hours, 1 week
+* calculates a few windowed averages: 1 hour, 6 hours, 12 hours, 24 hours, and 1 week
 * uploads the current reading and the averages as JSON files to the Google Cloud Storage bucket 
 
 The files have no TTL so they dont get cached. 
 
-The frontend reads the JSON files and renders the data. The frontend also refreshes the data every 30 seconds.
+The frontend reads the JSON files and renders the data. The frontend also refetches the files every 30 seconds.
 
 This is the cheapest setup, costing ~$1/month for the Google Cloud Storage bucket.
 
 Firebase hosting is free for the frontend.
+
+The [Raspberry Pi 400](https://www.raspberrypi.com/products/raspberry-pi-400/) costed me $100.
 
 ### Frontend
 
