@@ -33,9 +33,9 @@ The [Raspberry Pi 400](https://www.raspberrypi.com/products/raspberry-pi-400/) c
 
 ### Frontend
 
-|                           Next.js                            |                            React                             |                         Material UI                          |                          Highcharts                          |
+|                           Create React App                            |                            React                             |                         Material UI                          |                          Highcharts                          |
 | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
-| ![next-js-logo](https://github.com/minair-affair/minair-report/assets/83786415/a78b36a7-d6d4-48c5-8fd7-3828ee63e075) | ![react-color](https://github.com/minair-affair/minair-report/assets/327971/01a14705-9574-4a65-8c92-5476755d380b) | ![mui-color](https://github.com/minair-affair/minair-report/assets/327971/39712485-03e0-4fd0-adc6-dd2c1943d674) | ![highcharts](https://github.com/minair-affair/minair-report/assets/327971/d1a825d0-72d9-4ca6-8ae6-28c873b72c53) |
+| ![next-js-logo](https://create-react-app.dev/img/logo.svg) | ![react-color](https://github.com/minair-affair/minair-report/assets/327971/01a14705-9574-4a65-8c92-5476755d380b) | ![mui-color](https://github.com/minair-affair/minair-report/assets/327971/39712485-03e0-4fd0-adc6-dd2c1943d674) | ![highcharts](https://github.com/minair-affair/minair-report/assets/327971/d1a825d0-72d9-4ca6-8ae6-28c873b72c53) |
 
 
 ### Backend
