@@ -11,7 +11,10 @@ from sensor.utils.datetime_json_encoder import Encoder
 
 
 client = storage.Client()
+print('get bucket', datetime.now())
 bucket = client.get_bucket('www.minair.me')
+print('got bucket', datetime.now())
+
 
 db_fields = {
     "humidity_a": "humidity",
@@ -46,7 +49,28 @@ HEADERS = {
     'Content-Type': 'application/json'
 }
 
-API_URL = 'https://api.purpleair.com/v1/sensors/{}'.format(SENSOR_ID)
+FIELDS = [
+    'humidity_a',
+    'pressure_a',
+    'temperature_a',
+    'pm1.0_a',
+    'pm2.5_a',
+    'pm10.0_a',
+    '0.3_um_count_a',
+    '0.5_um_count_a',
+    '1.0_um_count_a',
+    '2.5_um_count_a',
+    '5.0_um_count_a',
+    '10.0_um_count_a',
+    'pm2.5_10minute_a',
+    'pm2.5_30minute_a',
+    'pm2.5_60minute_a',
+    'pm2.5_6hour_a',
+    'pm2.5_24hour_a',
+    'pm2.5_1week_a'
+]
+
+API_URL = 'https://api.purpleair.com/v1/sensors/{}?fields={}'.format(SENSOR_ID, ','.join(FIELDS))
 
 DATE_FORMAT = '%m/%d/%Y %I:%M:%S %p'
 
@@ -137,17 +161,27 @@ def load_current2():
 
 
 def save_measurement():
+    print('start API');
+    print(datetime.now())
     r = requests.get(API_URL, headers=HEADERS)
-    print(r.status_code)
+    print('sensor API done')
+    print(datetime.now())
     data = r.json()
+    print(data)
     sensor = data['sensor']
+    sensor['time_stamp'] = data['data_time_stamp']
     latest, new = save(sensor)
-    print(new)
     if new:
+        print('current upload start', datetime.now())
         upload_file('current.json', latest)
+        print('current upload done', datetime.now())
+
         upload_file('1hour.json', sensor_point.get_trends(1))
+        print('1hour upload done', datetime.now())
         upload_file('6hour.json', sensor_point.get_trends(6))
+        print('6hour upload done', datetime.now())
         upload_file('12hour.json', sensor_point.get_trends(12))
+        print('12hour upload done', datetime.now())
 
         day_data = sensor_point.get_trends(24)
         day_len = len(day_data)
@@ -158,8 +192,11 @@ def save_measurement():
             'pressure': compute_averages(day_data, day_len, 'pressure', 30.0),
             'humidity': compute_averages_range(day_data, day_len, 'humidity', 40, 60)
         }
+        print('24hr avg compute done', datetime.now())
         upload_file('24hour.json', day_data)
+        print('24hour upload done', datetime.now())
         upload_file('24htrends.json', day_percentages)
+        print('24hour trends upload done', datetime.now())
 
         week_data = sensor_point.get_trends(168)
         week_len = len(week_data)
@@ -170,8 +207,11 @@ def save_measurement():
             'pressure': compute_averages(week_data, week_len, 'pressure', 30.0),
             'humidity': compute_averages_range(week_data, week_len, 'humidity', 40, 60)
         }
+        print('1week avg compute done', datetime.now())
         upload_file('1weektrends.json', week_percentages)
+        print('1week trends upload done', datetime.now())
         upload_file('1week.json', week_data)
+        print('1week upload done', datetime.now())
 
     return latest
 
@@ -183,7 +223,7 @@ def save(pt):
 
     o['humidity'] = o['humidity'] + 4
     o['temperature'] = o['temperature'] - 8
-    o['timestamp'] = pt['last_seen']
+    o['timestamp'] = pt['time_stamp']
 
     o['aqi_2_5'] = aqi_pm_25(o['pm_2_5'])
     c, i = aqi_cat(o['aqi_2_5'])

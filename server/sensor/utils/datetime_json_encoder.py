@@ -2,7 +2,7 @@
 
 import datetime
 
-from flask import json
+import json
 
 from sensor.utils import api_utils
 

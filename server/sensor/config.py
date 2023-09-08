@@ -4,6 +4,7 @@ import os
 
 from dotenv import load_dotenv
 
+
 # Service information
 SERVICE_NAME = 'minair-report'
 SERVICE_VERSION = '1.0.0'

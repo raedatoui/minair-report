@@ -1,9 +1,10 @@
+import json
 import random
 
 import pytz
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, Float, DateTime, String, JSON
+from sqlalchemy import Column, Integer, Float, DateTime, String, JSON, text
 from sqlalchemy.orm import load_only, defer
 from sqlalchemy.sql import func
 
@@ -153,16 +154,17 @@ def get_trends(count):
         select_params = {
             'hours': 60*60*int(count)
         }
-        sql_query = """
-        SELECT *
+        sql_query = text("""
+        SELECT *    
         FROM measurement 
         WHERE timestamp >= UNIX_TIMESTAMP(NOW()) - :hours
         ORDER BY timestamp ASC;
-        """
+        """)
         rows = session.execute(
             sql_query,
-            select_params).fetchall()
-        items = [Measurement(**dict(row)).to_dict(False, False) for row in rows]
+            select_params)
+
+        items = [Measurement(**dict(row)).to_dict(False, False) for row in rows.mappings()]
         return items
 
 
@@ -183,12 +185,12 @@ def get_by_date(day):
         select_params = {
             'day': day
         }
-        sql_query = """
+        sql_query = text("""
         SELECT *
         FROM measurement 
         WHERE timestamp >= UNIX_TIMESTAMP(:day) - 60*60*24 AND timestamp < (UNIX_TIMESTAMP(:day))
         ORDER BY timestamp ASC;
-        """
+        """)
         rows = session.execute(
             sql_query,
             select_params).fetchall()
