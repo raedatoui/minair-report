@@ -17,3 +17,5 @@ cryptography==41.0.3
 pytz==2023.3.post1
 
 google-cloud-storage==2.10.0
+
+deepdiff==6.4.1

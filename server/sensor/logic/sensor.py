@@ -161,28 +161,16 @@ def load_current2():
 
 
 def save_measurement():
-    print('start API');
-    print(datetime.now())
     r = requests.get(API_URL, headers=HEADERS)
-    print('sensor API done')
-    print(datetime.now())
     data = r.json()
-    print(data)
     sensor = data['sensor']
     sensor['time_stamp'] = data['data_time_stamp']
     latest, new = save(sensor)
     if new:
-        print('current upload start', datetime.now())
         upload_file('current.json', latest)
-        print('current upload done', datetime.now())
-
         upload_file('1hour.json', sensor_point.get_trends(1))
-        print('1hour upload done', datetime.now())
         upload_file('6hour.json', sensor_point.get_trends(6))
-        print('6hour upload done', datetime.now())
         upload_file('12hour.json', sensor_point.get_trends(12))
-        print('12hour upload done', datetime.now())
-
         day_data = sensor_point.get_trends(24)
         day_len = len(day_data)
         day_percentages = {
@@ -192,12 +180,8 @@ def save_measurement():
             'pressure': compute_averages(day_data, day_len, 'pressure', 30.0),
             'humidity': compute_averages_range(day_data, day_len, 'humidity', 40, 60)
         }
-        print('24hr avg compute done', datetime.now())
         upload_file('24hour.json', day_data)
-        print('24hour upload done', datetime.now())
         upload_file('24htrends.json', day_percentages)
-        print('24hour trends upload done', datetime.now())
-
         week_data = sensor_point.get_trends(168)
         week_len = len(week_data)
         week_percentages = {
@@ -207,11 +191,8 @@ def save_measurement():
             'pressure': compute_averages(week_data, week_len, 'pressure', 30.0),
             'humidity': compute_averages_range(week_data, week_len, 'humidity', 40, 60)
         }
-        print('1week avg compute done', datetime.now())
         upload_file('1weektrends.json', week_percentages)
-        print('1week trends upload done', datetime.now())
         upload_file('1week.json', week_data)
-        print('1week upload done', datetime.now())
 
     return latest
 

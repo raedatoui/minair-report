@@ -1,5 +1,6 @@
 import json
 import random
+from deepdiff import DeepDiff
 
 import pytz
 from datetime import datetime
@@ -67,7 +68,7 @@ class Measurement(mysql.BaseModel):
 
     id = Column(Integer, primary_key=True, autoincrement=True)  # noqa
     timestamp = Column(Integer)
-    humidity = Column(Float)
+    humidity = Column(Integer)
     pressure = Column(Float)
     temperature = Column(Integer)
 
@@ -125,13 +126,14 @@ class Measurement(mysql.BaseModel):
 
 def create_measurement(data):
     with mysql.purp_db_session() as session:
-        query = session.query(Measurement).order_by(Measurement.__table__.c.id.desc())
-        record = query.first()
-        if record:
-            latest = record.to_dict()
-            if latest['timestamp'] == data['timestamp']:
-                return latest, False
+        # query = session.query(Measurement).order_by(Measurement.__table__.c.id.desc())
+        # record = query.first()
         measurement = Measurement(**data)
+            # latest = record.to_dict()
+            #
+            # if latest['timestamp'] == data['timestamp']:
+            #     return latest, False
+
         session.add(measurement)
         session.flush()
         return measurement.to_dict(), True
