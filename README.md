@@ -15,7 +15,14 @@ https://minair.me/minair-seminair
 
 
 ## Stack
-Flask app running on a Raspberry Pi. The backend reads the PurpleAir sensor data and continously pushes JSON files to a Google Cloud Storage bucket. A cron job on the Pi calls the Flask API endpoint every minute. The endpoint does a few things:
+### Google Cloud
+Initially I wrote a Flask app that ran on GCP (AppEngine) and connected to a mysql database on GCP. The Flask app hosted the index.html file for the frontend SPA. Assets such as js / css scripts, audio, images, and videos were hosted on a public GCP bucket. I also used a cron job on GCP to curl an endpoint that grabs the sensor data and stores it in the database.
+That costed about $30 / month. It was very fast to setup that stack and allowed me to quickly host the app and get started.
+
+### Raspberry Pi
+After a few mooths, I decided to get a Raspberry Pi.
+I now have the Flask app running on a the Pi. It took minimal work to get that setup on the Pi with Python3.7
+The backend reads the PurpleAir sensor data and continously pushes JSON files to a Google Cloud Storage bucket. A cron job on the Pi calls the Flask API endpoint every minute. The endpoint does a few things:
 * reads the latest sensor data
 * stores it in the database
 * calculates a few windowed averages: 1 hour, 6 hours, 12 hours, 24 hours, and 1 week
