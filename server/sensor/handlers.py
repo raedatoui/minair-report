@@ -10,7 +10,7 @@ from sensor.utils.api_utils import flaskify, convert_json
 from sensor.utils import response
 from sensor.utils.exceptions import MinairError
 from sensor.utils.datetime_json_encoder import Encoder
-from sensor.logic import sensor
+from sensor.logic import sensor_logic as sensor
 from sensor.logic import content
 
 

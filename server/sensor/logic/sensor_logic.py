@@ -9,12 +9,8 @@ from google.cloud import storage
 from sensor.utils.api_utils import convert_json
 from sensor.utils.datetime_json_encoder import Encoder
 
-
 client = storage.Client()
-print('get bucket', datetime.now())
 bucket = client.get_bucket('www.minair.me')
-print('got bucket', datetime.now())
-
 
 db_fields = {
     "humidity_a": "humidity",
@@ -164,8 +160,9 @@ def save_measurement():
     r = requests.get(API_URL, headers=HEADERS)
     data = r.json()
     sensor = data['sensor']
-    sensor['time_stamp'] = data['data_time_stamp']
+    sensor['time_stamp'] = sensor['stats_a']['time_stamp']
     latest, new = save(sensor)
+    print(new)
     if new:
         upload_file('current.json', latest)
         upload_file('1hour.json', sensor_point.get_trends(1))

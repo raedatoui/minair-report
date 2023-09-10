@@ -126,14 +126,12 @@ class Measurement(mysql.BaseModel):
 
 def create_measurement(data):
     with mysql.purp_db_session() as session:
-        # query = session.query(Measurement).order_by(Measurement.__table__.c.id.desc())
-        # record = query.first()
+        query = session.query(Measurement).order_by(Measurement.__table__.c.id.desc())
+        record = query.first()
+        latest = record.to_dict()
+        if latest['timestamp'] == data['timestamp']:
+            return latest, False
         measurement = Measurement(**data)
-            # latest = record.to_dict()
-            #
-            # if latest['timestamp'] == data['timestamp']:
-            #     return latest, False
-
         session.add(measurement)
         session.flush()
         return measurement.to_dict(), True
