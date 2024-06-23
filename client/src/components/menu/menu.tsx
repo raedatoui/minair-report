@@ -149,6 +149,7 @@ const Menu: FC<Props> = ({ currentIndex, play, songs, history, classes }) => {
                     )}
                 />
             </BottomNavigation>
+
             <BottomNavigation
                 value={value}
                 onChange={(event, newValue) => {
@@ -157,6 +158,21 @@ const Menu: FC<Props> = ({ currentIndex, play, songs, history, classes }) => {
                 showLabels
                 className={clsx(classes.menu2, { large: matches || xmatches })}
             >
+
+                <BottomNavigationAction
+                    onClick={() => window.open(
+                        'https://winners.webbyawards.com/2023/websites-and-mobile-sites/general-desktop-mobile-sites/weird/255566/the-minair-report',
+                        '_blank'
+                    )}
+                    label=""
+                    icon={(
+                        <Avatar
+                            className={clsx(classes.menuIcon, { large: matches, xlarge: xmatches })}
+                            src={`${CDN}${menuPath}webby-honoree-badge.webp`}
+                            variant="square"
+                        />
+                    )}
+                />
                 <BottomNavigationAction
                     label=""
                     icon={(
@@ -180,25 +196,14 @@ const Menu: FC<Props> = ({ currentIndex, play, songs, history, classes }) => {
                 />
                 <BottomNavigationAction
                     onClick={() => window.open(
-                        'https://vote.webbyawards.com/PublicVoting#/2023/websites-and-mobile-sites/general-websites-and-mobile-sites/weird?honoree',
+                        'https://www.w3award.com/winners/gallery/?event=1064&id=265960',
                         '_blank'
                     )}
                     label=""
                     icon={(
                         <Avatar
                             className={clsx(classes.menuIcon, { large: matches, xlarge: xmatches })}
-                            src={`${CDN}${menuPath}webby-honoree-badge.webp`}
-                            variant="square"
-                        />
-                    )}
-                />
-                <BottomNavigationAction
-                    onClick={() => navigate('minair-seminair')}
-                    label=""
-                    icon={(
-                        <Avatar
-                            className={clsx(classes.menuIcon, { large: matches, xlarge: xmatches })}
-                            src={`${CDN}${menuPath}about2.png`}
+                            src={`${CDN}${menuPath}w3.webp`}
                             variant="square"
                         />
                     )}
