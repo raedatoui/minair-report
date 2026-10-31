@@ -6,8 +6,8 @@ The Minair Report came to life during the height of the pandemic.
 On the surface, the website is a real-time data visualization for an indoor air
 quality sensor named “Minair” that lives in Brooklyn, NY. During the lockdown, a
 group of friends met virtually every Friday night for some socializing/games.
-It was during these meet ups that Minair was created. Each weekly meeting the
-group would iterate on the latest developments. Eventually it became highly
+It was during these meetups that Minair was created. At each weekly meeting, the
+group would iterate on the latest developments. Eventually, it became highly
 self-referential, leading to memes, original songs, erotica stories, and more.
 
 Watch the Minair Seminair for a deeper dive
@@ -16,27 +16,27 @@ https://minair.me/minair-seminair
 
 ## Stack
 ### Google Cloud
-Initially I wrote a Flask app that ran on GCP (AppEngine) and connected to a mysql database on GCP. The Flask app hosted the index.html file for the frontend SPA. Assets such as js / css scripts, audio, images, and videos were hosted on a public GCP bucket. I also used a cron job on GCP to curl an endpoint that grabs the sensor data and stores it in the database.
-That costed about $30 / month. It was very fast to setup that stack and allowed me to quickly host the app and get started.
+Initially I wrote a Flask app that ran on GCP (App Engine) and connected to a MySQL database on GCP. The Flask app hosted the index.html file for the frontend SPA. Assets such as JS / CSS scripts, audio, images, and videos were hosted on a public GCP bucket. I also used a cron job on GCP to curl an endpoint that grabs the sensor data and stores it in the database.
+That cost about $30 / month. It was very fast to set up that stack and allowed me to quickly host the app and get started.
 
 ### Raspberry Pi
-After a few mooths, I decided to get a Raspberry Pi.
-I now have the Flask app running on a the Pi. It took minimal work to get that setup on the Pi with Python3.7
-The backend reads the PurpleAir sensor data and continously pushes JSON files to a Google Cloud Storage bucket. A cron job on the Pi calls the Flask API endpoint every minute. The endpoint does a few things:
+After a few months, I decided to get a Raspberry Pi.
+I now have the Flask app running on the Pi. It took minimal work to get that set up on the Pi with Python 3.7.
+The backend reads the PurpleAir sensor data and continuously pushes JSON files to a Google Cloud Storage bucket. A cron job on the Pi calls the Flask API endpoint every minute. The endpoint does a few things:
 * reads the latest sensor data
 * stores it in the database
 * calculates a few windowed averages: 1 hour, 6 hours, 12 hours, 24 hours, and 1 week
 * uploads the current reading and the averages as JSON files to the Google Cloud Storage bucket 
 
-The files have no TTL so they dont get cached. 
+The files have no TTL so they don't get cached. 
 
 The frontend reads the JSON files and renders the data. The frontend also refetches the files every 30 seconds.
 
 This is the cheapest setup, costing ~$1/month for the Google Cloud Storage bucket.
 
-Firebase hosting is free for the frontend.
+Firebase Hosting is free for the frontend.
 
-The [Raspberry Pi 400](https://www.raspberrypi.com/products/raspberry-pi-400/) costed me $100.
+The [Raspberry Pi 400](https://www.raspberrypi.com/products/raspberry-pi-400/) cost me $100.
 
 ### Frontend
 
