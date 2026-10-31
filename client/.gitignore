@@ -23,6 +23,7 @@ yarn-debug.log*
 yarn-error.log*
 
 public/media
+public/images/
 public/favicons
 public/data/history/
 
