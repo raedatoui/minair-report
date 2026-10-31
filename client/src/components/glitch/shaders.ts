@@ -1,77 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#000000" />
-  <meta name="description" content="The Minair Report" />
-  <title>The Minair Report</title>
-  <link rel="apple-touch-icon" sizes="180x180" href="https://storage.googleapis.com/www.minair.me/favicons/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="https://storage.googleapis.com/www.minair.me/favicons/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="https://storage.googleapis.com/www.minair.me/favicons/favicon-16x16.png">
-  <link rel="manifest" href="https://storage.googleapis.com/www.minair.me/favicons/site.webmanifest">
-  <link rel="mask-icon" href="https://storage.googleapis.com/www.minair.me/favicons/safari-pinned-tab.svg" color="#5bbad5">
-  <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="theme-color" content="#ffffff">
+export const backgroundVertex = `
+in vec3 position;
+    in vec2 uv;
 
-  <style>
-    body {
-      width: 100%;
-    }
-    .app {
-      width: 100%;
-    }
-    #root.lightGreen {
-      background-image: url(https://storage.googleapis.com/www.minair.me/skies/lightGreen.jpeg);
-    }
-    #root.yellow {
-      background-image: url(https://storage.googleapis.com/www.minair.me/skies/yellow.jpeg);
-    }
-    #root.orange {
-      background-image: url(https://storage.googleapis.com/www.minair.me/skies/orange.jpeg);
-    }
-    #root.red {
-      background-image: url(https://storage.googleapis.com/www.minair.me/skies/red.jpeg);
-    }
-    #root.burgundy {
-      background-image: url(https://storage.googleapis.com/www.minair.me/skies/burgundy.jpeg);
-    }
-    body.glitch, #root.glitch {
-        background-color: rgb(78,35,35);
-    }
-  </style>
-  <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@1,700&family=Dancing+Script:wght@700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-E6TKKXZEJP"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-E6TKKXZEJP');
-  </script>
-
-
-<script id="background-image-vs" type="x-shader/x-vertex">
-    attribute vec3 position;
-    attribute vec2 uv;
-
-    varying vec2 vUv;
+    out vec2 vUv;
 
     void main(void) {
       vUv = uv;
       gl_Position = vec4(position, 1.0);
     }
-</script>
-<script id="background-image-fs" type="x-shader/x-fragment">
-    precision highp float;
+`;
+
+export const backgroundFragment = `
+precision highp float;
+    out vec4 fragColor;
 
     uniform vec2 resolution;
     uniform vec2 imageResolution;
-    uniform sampler2D texture;
+    uniform sampler2D uTexture;
 
-    varying vec2 vUv;
+    in vec2 vUv;
 
     void main(void) {
       vec2 ratio = vec2(
@@ -83,29 +30,31 @@
           vUv.x * ratio.x + (1.0 - ratio.x) * 0.5,
           vUv.y * ratio.y + (1.0 - ratio.y) * 0.5
         );
-      gl_FragColor = texture2D(texture, uv);
+      fragColor = texture(uTexture, uv);
     }
-</script>
+`;
 
-<script id="post-effect-vs" type="x-shader/x-vertex">
-    attribute vec3 position;
-    attribute vec2 uv;
+export const postVertex = `
+in vec3 position;
+    in vec2 uv;
 
-    varying vec2 vUv;
+    out vec2 vUv;
 
     void main() {
       vUv = uv;
       gl_Position = vec4(position, 1.0);
     }
-</script>
-<script id="post-effect-fs" type="x-shader/x-fragment">
-    precision highp float;
+`;
+
+export const postFragment = `
+precision highp float;
+    out vec4 fragColor;
 
     uniform float time;
     uniform vec2 resolution;
-    uniform sampler2D texture;
+    uniform sampler2D uTexture;
 
-    varying vec2 vUv;
+    in vec2 vUv;
 
 
     vec3 mod289(vec3 x) {
@@ -221,9 +170,9 @@
         ) / resolution.x;
       float rgbDiff = (6.0 + sin(time * 500.0 + vUv.y * 40.0) * (20.0 * strength + 1.0)) / resolution.x;
       float rgbUvX = vUv.x + rgbWave;
-      float r = texture2D(texture, vec2(rgbUvX + rgbDiff, vUv.y) + shake).r;
-      float g = texture2D(texture, vec2(rgbUvX, vUv.y) + shake).g;
-      float b = texture2D(texture, vec2(rgbUvX - rgbDiff, vUv.y) + shake).b;
+      float r = texture(uTexture, vec2(rgbUvX + rgbDiff, vUv.y) + shake).r;
+      float g = texture(uTexture, vec2(rgbUvX, vUv.y) + shake).g;
+      float b = texture(uTexture, vec2(rgbUvX - rgbDiff, vUv.y) + shake).b;
 
       float whiteNoise = (random(vUv + mod(time, 10.0)) * 2.0 - 1.0) * (0.15 + strength * 0.15);
 
@@ -232,33 +181,22 @@
       float noiseY = step((snoise3(vec3(0.0, vUv.y * 3.0, bnTime)) + 1.0) / 2.0, 0.12 + strength * 0.3);
       float bnMask = noiseX * noiseY;
       float bnUvX = vUv.x + sin(bnTime) * 0.2 + rgbWave;
-      float bnR = texture2D(texture, vec2(bnUvX + rgbDiff, vUv.y)).r * bnMask;
-      float bnG = texture2D(texture, vec2(bnUvX, vUv.y)).g * bnMask;
-      float bnB = texture2D(texture, vec2(bnUvX - rgbDiff, vUv.y)).b * bnMask;
+      float bnR = texture(uTexture, vec2(bnUvX + rgbDiff, vUv.y)).r * bnMask;
+      float bnG = texture(uTexture, vec2(bnUvX, vUv.y)).g * bnMask;
+      float bnB = texture(uTexture, vec2(bnUvX - rgbDiff, vUv.y)).b * bnMask;
       vec4 blockNoise = vec4(bnR, bnG, bnB, 1.0);
 
       float bnTime2 = floor(time * 25.0) * 300.0;
       float noiseX2 = step((snoise3(vec3(0.0, vUv.x * 2.0, bnTime2)) + 1.0) / 2.0, 0.12 + strength * 0.5);
       float noiseY2 = step((snoise3(vec3(0.0, vUv.y * 8.0, bnTime2)) + 1.0) / 2.0, 0.12 + strength * 0.3);
       float bnMask2 = noiseX2 * noiseY2;
-      float bnR2 = texture2D(texture, vec2(bnUvX + rgbDiff, vUv.y)).r * bnMask2;
-      float bnG2 = texture2D(texture, vec2(bnUvX, vUv.y)).g * bnMask2;
-      float bnB2 = texture2D(texture, vec2(bnUvX - rgbDiff, vUv.y)).b * bnMask2;
+      float bnR2 = texture(uTexture, vec2(bnUvX + rgbDiff, vUv.y)).r * bnMask2;
+      float bnG2 = texture(uTexture, vec2(bnUvX, vUv.y)).g * bnMask2;
+      float bnB2 = texture(uTexture, vec2(bnUvX - rgbDiff, vUv.y)).b * bnMask2;
       vec4 blockNoise2 = vec4(bnR2, bnG2, bnB2, 1.0);
 
       float waveNoise = (sin(vUv.y * 1200.0) + 1.0) / 2.0 * (0.15 + strength * 0.2);
 
-      gl_FragColor = vec4(r, g, b, 1.0) * (1.0 - bnMask - bnMask2) + (whiteNoise + blockNoise + blockNoise2 - waveNoise);
+      fragColor = vec4(r, g, b, 1.0) * (1.0 - bnMask - bnMask2) + (whiteNoise + blockNoise + blockNoise2 - waveNoise);
     }
-
-</script>
-
-
-</head>
-
-<body class="lightGreen">
-  <noscript>You need to enable JavaScript to run this app.</noscript>
-  <div id="root" class="lightGreen"></div>
-</body>
-
-</html>
+`;

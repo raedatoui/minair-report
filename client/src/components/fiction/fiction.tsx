@@ -1,19 +1,18 @@
+import { track } from '../../utils/analytics';
 import React, { FC, useEffect, useState } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import Timeline from '@material-ui/lab/Timeline';
-import TimelineItem from '@material-ui/lab/TimelineItem';
-import TimelineSeparator from '@material-ui/lab/TimelineSeparator';
-import TimelineConnector from '@material-ui/lab/TimelineConnector';
-import TimelineContent from '@material-ui/lab/TimelineContent';
-import TimelineDot from '@material-ui/lab/TimelineDot';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import Button from '@material-ui/core/Button';
-import Box from '@material-ui/core/Box';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
-import Modal from '@material-ui/core/Modal';
-import Avatar from '@material-ui/core/Avatar';
-import { styles } from '../../styles';
+import Timeline from '@mui/lab/Timeline';
+import TimelineItem from '@mui/lab/TimelineItem';
+import TimelineSeparator from '@mui/lab/TimelineSeparator';
+import TimelineConnector from '@mui/lab/TimelineConnector';
+import TimelineContent from '@mui/lab/TimelineContent';
+import TimelineDot from '@mui/lab/TimelineDot';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
+import Avatar from '@mui/material/Avatar';
 import { Fiction as FictionType, StyledComponent, ComponentProps } from '../../types';
 import { fetchData } from '../../utils';
 import { CDN, apiRoutes } from '../../constants';
@@ -49,7 +48,7 @@ const FictionItemInner: FC<Story> = ({ useWhite, fiction, classes }) => {
     );
 };
 
-const FictionItem = withStyles(styles)(FictionItemInner);
+const FictionItem = FictionItemInner;
 
 const getModalStyle = () => {
     const top = 50;
@@ -72,17 +71,12 @@ const Fiction:FC<Props> = ({ setShowHeader, useWhite, play, classes }) => {
     const [open, setOpen] = React.useState(true);
     const [modalStyle] = React.useState(getModalStyle);
 
-    const handleClose = () => {
-        setOpen(false);
-    };
-
     const navigate = () => {
         setShowHeader(false);
         setOpen(false);
         play();
         // history.push(url);
-        // @ts-ignore
-        gtag('event', 'not18');
+        track('event', 'not18');
     };
 
     useEffect(() => {
@@ -103,7 +97,7 @@ const Fiction:FC<Props> = ({ setShowHeader, useWhite, play, classes }) => {
                         The Minair Affair: <br />An Erotic Fan Fiction Journey of Longing, Lust, and Air Quality
                     </Typography>
                     <Timeline className={classes.timeline}>
-                        { fiction.map(f => (<FictionItem key={f.chapter} useWhite={useWhite} fiction={f} />))}
+                        { fiction.map(f => (<FictionItem classes={classes} key={f.chapter} useWhite={useWhite} fiction={f} />))}
                     </Timeline>
                 </>
             )}
@@ -111,16 +105,8 @@ const Fiction:FC<Props> = ({ setShowHeader, useWhite, play, classes }) => {
                 id="fiction-modal"
                 open={open}
                 aria-labelledby="miniar-fiction-age-verification"
-                disableEscapeKeyDown
                 disableAutoFocus
-                BackdropProps={{
-                    classes: {
-                        root: classes.backDrop
-                    }
-                }}
-                onClose={(event, reason) => {
-                    if (reason !== 'backdropClick') handleClose();
-                }}
+                slotProps={{ backdrop: { className: classes.backDrop } }}
             >
                 <div style={modalStyle} className={classes.modal}>
                     <Avatar src={`${CDN}/halt.png`} variant="square" />

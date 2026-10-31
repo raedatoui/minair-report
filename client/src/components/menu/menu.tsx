@@ -1,21 +1,23 @@
+import { track } from '../../utils/analytics';
 import React, { FC, useState, createRef, useRef, useEffect } from 'react';
 import clsx from 'clsx';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
-import BottomNavigation from '@material-ui/core/BottomNavigation';
-import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
-import Avatar from '@material-ui/core/Avatar';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import BottomNavigation from '@mui/material/BottomNavigation';
+import BottomNavigationAction from '@mui/material/BottomNavigationAction';
+import { useRouter } from 'next/navigation';
+import Avatar from '@mui/material/Avatar';
 import { CDN, audio as audioPath, menu as menuPath } from '../../constants';
 import { StyledComponent, Song } from '../../types';
 import { makeAudio } from '../../utils';
 
-interface Props extends RouteComponentProps, StyledComponent {
+interface Props extends StyledComponent {
     currentIndex: number
     play: (idx: number) => void,
     songs: Song[]
 }
 
-const Menu: FC<Props> = ({ currentIndex, play, songs, history, classes }) => {
+const Menu: FC<Props> = ({ currentIndex, play, songs, classes }) => {
+    const router = useRouter();
     const matches = useMediaQuery('(min-width:1024px)');
     const xmatches = useMediaQuery('(min-width:1280px)');
     const [value, setValue] = useState(0);
@@ -23,28 +25,30 @@ const Menu: FC<Props> = ({ currentIndex, play, songs, history, classes }) => {
     const donateRef = createRef<HTMLElement>();
     const donateSrcRef = createRef<HTMLElement>();
 
-    const audioRef2 = useRef(makeAudio(() => {}, `${CDN}${audioPath}minair-mission-statement.wav`));
+    const audioRef2 = useRef<HTMLAudioElement | null>(null);
+    useEffect(() => {
+        const audio = makeAudio(() => {}, `${CDN}${audioPath}minair-mission-statement.wav`);
+        audioRef2.current = audio;
+        return () => { audio.pause(); audioRef2.current = null; };
+    }, []);
 
     const navigate = (url: string) => {
-        history.push(url);
-        // @ts-ignore
-        gtag('pageview', url);
+        router.push(`/${url.replace(/^\//, '')}`);
+        track('pageview', url);
     };
 
     const handleJingle = () => {
         let songPosition = currentIndex + 1;
         if (songPosition === songs.length)
             songPosition = 0;
-        // @ts-ignore
-        gtag('event', songs[songPosition].title);
+        track('event', songs[songPosition].title);
         play(songPosition);
         navigate('songs');
     };
 
     const handleMission = () => {
         audioRef2?.current?.play();
-        // @ts-ignore
-        gtag('event', 'mission_statement');
+        track('event', 'mission_statement');
     };
 
     useEffect(() => {
@@ -217,4 +221,4 @@ const Menu: FC<Props> = ({ currentIndex, play, songs, history, classes }) => {
     );
 };
 
-export default withRouter(Menu);
+export default Menu;

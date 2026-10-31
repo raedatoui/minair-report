@@ -1,146 +1,66 @@
-/* eslint-disable no-empty */
-/* eslint-disable func-names */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-param-reassign */
-/* eslint-disable global-require */
+import * as THREE from 'three';
 import { CDN } from '../../constants';
-
-const THREE = require('three');
-const debounce = require('./debounce.js');
-
-const BackgroundImage = require('./backgroundImage.js').default;
-const PostEffect = require('./postEffect.js').default;
-
-const normalizeVector2 = function (vector) {
-    vector.x = (vector.x / document.body.clientWidth) * 2 - 1;
-    vector.y = -(vector.y / window.innerHeight) * 2 + 1;
-};
+import BackgroundImage from './backgroundImage';
+import PostEffect from './postEffect';
 
 const images = [
     [`${CDN}/media/minair.jpg`, 2048, 1152],
-    [`${CDN}/media/minair-mb.jpg`, 828, 1792],
+    [`${CDN}/media/minair-mb.jpg`, 828, 1792]
 ];
-export default function () {
+
+export default function init() {
     const canvas = document.getElementById('canvas-webgl');
-    const renderer = new THREE.WebGL1Renderer({
-        antialias: false,
-        canvas,
-    });
-    const renderBack1 = new THREE.WebGLRenderTarget(document.body.clientWidth, window.innerHeight);
+    const renderer = new THREE.WebGLRenderer({ antialias: false, canvas });
+    const renderTarget = new THREE.WebGLRenderTarget(document.body.clientWidth, window.innerHeight);
     const scene = new THREE.Scene();
-    const sceneBack = new THREE.Scene();
+    const background = new THREE.Scene();
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-    const cameraBack = new THREE.PerspectiveCamera(45, document.body.clientWidth / window.innerHeight, 1, 2);
-    const clock = new THREE.Clock();
+    const backgroundCamera = new THREE.PerspectiveCamera(45, document.body.clientWidth / window.innerHeight, 1, 2);
+    const timer = new THREE.Timer();
+    timer.connect(document);
+    const image = new BackgroundImage(...images[0]);
+    const effect = new PostEffect(renderTarget.texture);
+    let disposed = false;
+    let frame = 0;
 
-    const vectorTouchStart = new THREE.Vector2();
-    const vectorTouchMove = new THREE.Vector2();
-    const vectorTouchEnd = new THREE.Vector2();
-
-    let isDrag = false;
-
-    //
-    // process for this sketch.
-    //
-
-    const bgImg = new BackgroundImage(images[0][0], images[0][1], images[0][2]);
-    const postEffect = new PostEffect(renderBack1.texture);
-
-    //
-    // common process
-    //
-    const resizeWindow = () => {
-        canvas.width = document.body.clientWidth;
-        canvas.height = window.innerHeight;
-        cameraBack.aspect = document.body.clientWidth / window.innerHeigh;
-        cameraBack.updateProjectionMatrix();
-        bgImg.resize();
-        postEffect.resize();
-        renderBack1.setSize(document.body.clientWidth, window.innerHeight);
-        renderer.setSize(document.body.clientWidth, window.innerHeight);
-
-        if (document.body.clientWidth < window.innerHeight)
-            bgImg.updateTex(images[1][0], images[1][1], images[1][2]);
-        else
-            bgImg.updateTex(images[0][0], images[0][1], images[0][2]);
+    const resize = () => {
+        const width = document.body.clientWidth;
+        const height = window.innerHeight;
+        backgroundCamera.aspect = width / height;
+        backgroundCamera.updateProjectionMatrix();
+        renderer.setSize(width, height);
+        renderTarget.setSize(width, height);
+        image.resize();
+        effect.resize();
+        image.updateTex(...images[width < height ? 1 : 0]);
     };
-
     const render = () => {
-        const time = clock.getDelta();
-        renderer.setRenderTarget(renderBack1);
-        renderer.render(sceneBack, cameraBack);
-        postEffect.render(time);
+        timer.update();
+        renderer.setRenderTarget(renderTarget);
+        renderer.render(background, backgroundCamera);
+        effect.render(timer.getDelta());
         renderer.setRenderTarget(null);
         renderer.render(scene, camera);
+        frame = requestAnimationFrame(render);
     };
-
-    const renderLoop = () => {
+    renderer.setClearColor(0x555555, 1);
+    image.init(() => {
+        if (disposed) return;
+        background.add(image.obj);
+        scene.add(effect.obj);
+        window.addEventListener('resize', resize);
+        resize();
         render();
-        requestAnimationFrame(renderLoop);
+    });
+    return () => {
+        disposed = true;
+        cancelAnimationFrame(frame);
+        window.removeEventListener('resize', resize);
+        timer.dispose();
+        image.dispose();
+        effect.obj.geometry.dispose();
+        effect.obj.material.dispose();
+        renderTarget.dispose();
+        renderer.dispose();
     };
-    const touchStart = (isTouched) => {
-        isDrag = true;
-    };
-    const touchMove = (isTouched) => {
-        if (isDrag) {}
-    };
-    const touchEnd = (isTouched) => {
-        isDrag = false;
-    };
-    const on = () => {
-        window.addEventListener('resize', debounce(() => {
-            resizeWindow();
-        }), 250);
-        canvas.addEventListener('mousedown', (event) => {
-            event.preventDefault();
-            vectorTouchStart.set(event.clientX, event.clientY);
-            normalizeVector2(vectorTouchStart);
-            touchStart(false);
-        });
-        document.addEventListener('mousemove', (event) => {
-            event.preventDefault();
-            vectorTouchMove.set(event.clientX, event.clientY);
-            normalizeVector2(vectorTouchMove);
-            touchMove(false);
-        });
-        document.addEventListener('mouseup', (event) => {
-            event.preventDefault();
-            vectorTouchEnd.set(event.clientX, event.clientY);
-            normalizeVector2(vectorTouchEnd);
-            touchEnd(false);
-        });
-        canvas.addEventListener('touchstart', (event) => {
-            event.preventDefault();
-            vectorTouchStart.set(event.touches[0].clientX, event.touches[0].clientY);
-            normalizeVector2(vectorTouchStart);
-            touchStart(event.touches[0].clientX, event.touches[0].clientY, true);
-        });
-        canvas.addEventListener('touchmove', (event) => {
-            event.preventDefault();
-            vectorTouchMove.set(event.touches[0].clientX, event.touches[0].clientY);
-            normalizeVector2(vectorTouchMove);
-            touchMove(true);
-        });
-        canvas.addEventListener('touchend', (event) => {
-            event.preventDefault();
-            vectorTouchEnd.set(event.changedTouches[0].clientX, event.changedTouches[0].clientY);
-            normalizeVector2(vectorTouchEnd);
-            touchEnd(true);
-        });
-    };
-
-    const init = () => {
-        renderer.setSize(document.body.clientWidth, window.innerHeight);
-        renderer.setClearColor(0x555555, 1.0);
-
-        bgImg.init(() => {
-            sceneBack.add(bgImg.obj);
-            scene.add(postEffect.obj);
-            on();
-            resizeWindow();
-            renderLoop();
-        });
-
-    };
-    init();
 }

@@ -1,9 +1,7 @@
 import React, { FC, useEffect, useState } from 'react';
-import Fab from '@material-ui/core/Fab';
-import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
-import { withStyles } from '@material-ui/core/styles';
+import Fab from '@mui/material/Fab';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import { StyledComponent } from '../types';
-import { styles } from '../styles';
 
 const ScrollToTop:FC<StyledComponent> = ({ classes }) => {
     const [isVisible, setIsVisible] = useState(false);
@@ -27,6 +25,7 @@ const ScrollToTop:FC<StyledComponent> = ({ classes }) => {
 
     useEffect(() => {
         window.addEventListener('scroll', toggleVisibility);
+        return () => window.removeEventListener('scroll', toggleVisibility);
     }, []);
 
     return (
@@ -41,4 +40,4 @@ const ScrollToTop:FC<StyledComponent> = ({ classes }) => {
     );
 };
 
-export default withStyles(styles)(ScrollToTop);
+export default ScrollToTop;

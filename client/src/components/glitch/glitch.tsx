@@ -1,7 +1,8 @@
+import { useEffect } from 'react';
 import init from './init';
 
 const Glitch = () => {
-    init();
+    useEffect(() => init(), []);
     return null;
 };
 

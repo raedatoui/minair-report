@@ -1,26 +1,26 @@
 /* eslint-disable react/no-array-index-key -- Immutable exports preserve duplicate source rows as separate occurrences. */
 import React, { FC, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import FormControl from '@material-ui/core/FormControl';
-import Grid from '@material-ui/core/Grid';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-import Snackbar from '@material-ui/core/Snackbar';
-import SnackbarContent from '@material-ui/core/SnackbarContent';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Typography from '@material-ui/core/Typography';
-import Pagination from '@material-ui/lab/Pagination';
+import Link from 'next/link';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CircularProgress from '@mui/material/CircularProgress';
+import FormControl from '@mui/material/FormControl';
+import Grid from '@mui/material/Grid';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import Snackbar from '@mui/material/Snackbar';
+import SnackbarContent from '@mui/material/SnackbarContent';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Typography from '@mui/material/Typography';
+import Pagination from '@mui/material/Pagination';
 import { historyDataPath } from '../../constants';
 import { solidAqiColors } from '../../styles';
 import { StyledComponent } from '../../types';
@@ -107,8 +107,8 @@ const History: FC<StyledComponent> = ({ classes }) => {
     }, [showArchive, archivePage]);
 
     const navigation = (
-        <Box px={3} pt={3}>
-            <Button component={Link} to="/trends" className={classes.songRowCellButton}>Recent readings</Button>
+        <Box sx={{ px: 3, pt: 3 }}>
+            <Button component={Link} href="/trends" className={classes.songRowCellButton}>Recent readings</Button>
         </Box>
     );
 
@@ -116,7 +116,7 @@ const History: FC<StyledComponent> = ({ classes }) => {
         return (
             <div className={classes.historyPage}>
                 {navigation}
-                <Box p={3} textAlign="center">
+                <Box sx={{ p: 3, textAlign: 'center' }}>
                     {error ? (
                         <>
                             <Typography>The historical report is not available yet. Try again after it has been refreshed.</Typography>
@@ -178,7 +178,7 @@ const History: FC<StyledComponent> = ({ classes }) => {
     return (
         <div className={classes.historyPage}>
             {navigation}
-            <Box px={3} pt={3} textAlign="center">
+            <Box sx={{ px: 3, pt: 3, textAlign: 'center' }}>
                 <Typography
                     variant="h3"
                     component="h1"
@@ -193,7 +193,7 @@ const History: FC<StyledComponent> = ({ classes }) => {
             </Box>
             <Grid container spacing={3} className={classes.currentContainer}>
                 {statCards.map(stat => (
-                    <Grid item xs={12} sm={6} md={3} className={classes.card} key={stat.label}>
+                    <Grid size={{ xs: 12, sm: 6, md: 3 }} className={classes.card} key={stat.label}>
                         <Card
                             variant="outlined"
                             className={`${classes.cardBubble} ${classes.historyCard}`}
@@ -208,7 +208,7 @@ const History: FC<StyledComponent> = ({ classes }) => {
                     </Grid>
                 ))}
 
-                <Grid item xs={12} className={classes.card}>
+                <Grid size={{ xs: 12 }} className={classes.card}>
                     <Card variant="outlined" className={`${classes.cardBubble} ${classes.historyCard}`}>
                         <CardContent className={classes.historyContent}>
                             <Typography variant="h4" component="h2" gutterBottom>Month by month</Typography>
@@ -251,7 +251,7 @@ const History: FC<StyledComponent> = ({ classes }) => {
                             <Typography variant="body2">
                                 Sample-weighted averages. Gaps are missing months; observed days do not imply full-day coverage.
                             </Typography>
-                            <Box component="details" mt={2}>
+                            <Box sx={{ mt: 2 }} component="details">
                                 <Typography component="summary">Monthly numbers · {selected.label} ({selected.unit})</Typography>
                                 <TableContainer>
                                     <Table size="small" className={classes.historyTable} aria-label="Monthly statistics">
@@ -287,7 +287,7 @@ const History: FC<StyledComponent> = ({ classes }) => {
                     </Card>
                 </Grid>
 
-                <Grid item xs={12} md={4} className={classes.card}>
+                <Grid size={{ xs: 12, md: 4 }} className={classes.card}>
                     <Card variant="outlined" className={`${classes.cardBubble} ${classes.historyCard}`}>
                         <CardContent className={classes.historyContent}>
                             <Typography variant="h5" component="h2" gutterBottom>How the air stacked up</Typography>
@@ -308,13 +308,13 @@ const History: FC<StyledComponent> = ({ classes }) => {
                                     </TableBody>
                                 </Table>
                             </TableContainer>
-                            <Box mt={2}>
+                            <Box sx={{ mt: 2 }}>
                                 <Typography variant="body2">Approximate 95th percentile: {format(totals.aqi_2_5_p95)} AQI.</Typography>
                             </Box>
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid item xs={12} md={8} className={classes.card}>
+                <Grid size={{ xs: 12, md: 8 }} className={classes.card}>
                     <Card variant="outlined" className={`${classes.cardBubble} ${classes.historyCard}`}>
                         <CardContent className={classes.historyContent}>
                             <Typography variant="h5" component="h2" gutterBottom>All-time averages</Typography>
@@ -345,12 +345,12 @@ const History: FC<StyledComponent> = ({ classes }) => {
                     </Card>
                 </Grid>
 
-                <Grid item xs={12} className={classes.card}>
+                <Grid size={{ xs: 12 }} className={classes.card}>
                     <Card variant="outlined" className={`${classes.cardBubble} ${classes.historyCard}`}>
                         <CardContent className={classes.historyContent}>
                             <Box component="details">
                                 <Typography variant="h4" component="summary">The big spikes</Typography>
-                                <Box mt={2}>
+                                <Box sx={{ mt: 2 }}>
                                     <Typography>
                                         {format(totals.spike_readings, 0)} readings above {format(report.spike_threshold)} PM2.5 AQI.
                                         {' '}Grouped by AQI band, all years.
@@ -364,7 +364,7 @@ const History: FC<StyledComponent> = ({ classes }) => {
                     </Card>
                 </Grid>
 
-                <Grid item xs={12} className={classes.card}>
+                <Grid size={{ xs: 12 }} className={classes.card}>
                     <Card variant="outlined" className={`${classes.cardBubble} ${classes.historyCard}`}>
                         <CardContent className={classes.historyContent}>
                             <Typography variant="h3" component="h2" className={classes.bold}>The 420 club ☁</Typography>
@@ -372,7 +372,7 @@ const History: FC<StyledComponent> = ({ classes }) => {
                                 {format(quality.total_420, 0)} very specific moments in atmospheric history.
                             </Typography>
                             <Typography>Exactly 420 in either AQI column. A reading matching both appears once.</Typography>
-                            <Box my={2}>
+                            <Box sx={{ my: 2 }}>
                                 {quality.total_420 > 0 && (
                                     <Button
                                         color="inherit"
@@ -432,7 +432,7 @@ const History: FC<StyledComponent> = ({ classes }) => {
                                         </TableContainer>
                                     )}
                                     {Math.ceil(quality.total_420 / 100) > 1 && (
-                                        <Box mt={2}>
+                                        <Box sx={{ mt: 2 }}>
                                             <Pagination
                                                 page={archivePage}
                                                 count={Math.ceil(quality.total_420 / 100)}
@@ -448,7 +448,7 @@ const History: FC<StyledComponent> = ({ classes }) => {
                     </Card>
                 </Grid>
 
-                <Grid item xs={12} className={classes.card}>
+                <Grid size={{ xs: 12 }} className={classes.card}>
                     <Card variant="outlined" className={`${classes.cardBubble} ${classes.historyCard}`}>
                         <CardContent className={classes.historyContent}>
                             <Typography variant="h5" component="h2" gutterBottom>About these numbers</Typography>
@@ -456,16 +456,16 @@ const History: FC<StyledComponent> = ({ classes }) => {
                                 {format(quality.source_rows, 0)} source rows; {format(quality.invalid_timestamps, 0)} invalid timestamps
                                 excluded from dated analysis. {format(quality.undated_420, 0)} undated 420 matches kept in the archive.
                             </Typography>
-                            <Box component="details" mt={2}>
+                            <Box sx={{ mt: 2 }} component="details">
                                 <Typography component="summary">Method and data completeness</Typography>
-                                <Box my={2}>
+                                <Box sx={{ my: 2 }}>
                                     <Typography>
                                         Source: {report.source}. Dates and month boundaries use {report.timezone}, including daylight saving time.
                                         Every row has equal weight; averages are not time-weighted. Duplicates are retained.
                                         Sensor downtime and uneven sampling can affect comparisons.
                                     </Typography>
                                 </Box>
-                                <Box my={2}>
+                                <Box sx={{ my: 2 }}>
                                     <Typography>
                                         Missing and invalid values are excluded per measurement, including negative AQI.
                                         Other finite values are retained.

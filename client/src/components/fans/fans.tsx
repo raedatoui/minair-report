@@ -1,17 +1,17 @@
 import React, { FC, useRef, useEffect, useState } from 'react';
 import { uniq, filter, sortBy } from 'lodash';
-import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import CardActions from '@material-ui/core/CardActions';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import ShareIcon from '@material-ui/icons/Share';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
-import MenuItem from '@material-ui/core/MenuItem';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
-import Box from '@material-ui/core/Box';
-import Select from '@material-ui/core/Select';
+import Card from '@mui/material/Card';
+import CardActionArea from '@mui/material/CardActionArea';
+import CardActions from '@mui/material/CardActions';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import ShareIcon from '@mui/icons-material/Share';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
+import Box from '@mui/material/Box';
+import Select from '@mui/material/Select';
 import ReactPlayer from 'react-player';
 import screenfull from 'screenfull';
 import { CDN, fans as fansPath, apiRoutes } from '../../constants';
@@ -57,7 +57,7 @@ const FanImage: FC<FanImageProps> = ({ useWhite, image, classes }) => {
                 <IconButton aria-label="share">
                     <ShareIcon />
                 </IconButton>
-                <Typography variant="body2" color="textSecondary" component="span">
+                <Typography variant="body2" sx={{ color: 'text.secondary' }} component="span">
                     by {image.submittedBy}
                 </Typography>
             </CardActions>
@@ -69,28 +69,22 @@ const FanVideo: FC<FanVideoProps> = ({ useWhite, video, classes }) => {
     const [liked, setLiked] = React.useState(false);
     const whiteBox = useWhite ? classes.whiteBox : '';
 
-    const ref = useRef(null);
+    const ref = useRef<HTMLVideoElement | null>(null);
     useEffect(() => {
         if (liked && screenfull.isEnabled)
             // @ts-ignore
-            screenfull.request(document.getElementById(video.id));
+            screenfull.request(document.getElementById(String(video.id)));
     }, [liked, video]);
 
     return (
         <Card className={`${classes.fanCard} ${whiteBox}`}>
             <CardActionArea onClick={() => setLiked(!liked)}>
                 <ReactPlayer
-                    config={{
-                        file: {
-                            attributes: {
-                                preload: 'none',
-                                poster: `${CDN}${fansPath}${video.poster}`
-                            }
-                        }
-                    }}
-                    id={video.id}
+                    id={String(video.id)}
                     ref={ref}
-                    url={`${CDN}${fansPath}${video.file}`}
+                    preload="none"
+                    poster={`${CDN}${fansPath}${video.poster}`}
+                    src={`${CDN}${fansPath}${video.file}`}
                     playing={liked}
                     width="100%"
                 />
@@ -103,7 +97,7 @@ const FanVideo: FC<FanVideoProps> = ({ useWhite, video, classes }) => {
                 <IconButton aria-label="share">
                     <ShareIcon />
                 </IconButton>
-                <Typography variant="body2" color="textSecondary" component="span">
+                <Typography variant="body2" sx={{ color: 'text.secondary' }} component="span">
                     by {video.submittedBy}
                 </Typography>
             </CardActions>

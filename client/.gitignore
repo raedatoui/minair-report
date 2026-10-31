@@ -27,3 +27,10 @@ public/favicons
 public/data/history/
 
 .idea/
+
+# Next.js
+/.next/
+/out/
+*.tsbuildinfo
+pnpm-debug.log*
+/next-env.d.ts

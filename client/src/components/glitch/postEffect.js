@@ -1,5 +1,6 @@
 /* eslint-disable global-require */
-const THREE = require('three');
+import * as THREE from 'three';
+import { postVertex, postFragment } from './shaders';
 
 export default class PostEffect {
     constructor(texture, imgW, imgH) {
@@ -14,7 +15,7 @@ export default class PostEffect {
                 type: 'v2',
                 value: new THREE.Vector2(document.body.clientWidth, window.innerHeight)
             },
-            texture: {
+            uTexture: {
                 type: 't',
                 value: texture,
             },
@@ -36,9 +37,10 @@ export default class PostEffect {
         return new THREE.Mesh(
             new THREE.PlaneGeometry(2, 2),
             new THREE.RawShaderMaterial({
+                glslVersion: THREE.GLSL3,
                 uniforms: this.uniforms,
-                vertexShader: document.getElementById('post-effect-vs').textContent,
-                fragmentShader: document.getElementById('post-effect-fs').textContent
+                vertexShader: postVertex,
+                fragmentShader: postFragment
             })
         );
     }

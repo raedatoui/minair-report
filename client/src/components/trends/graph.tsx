@@ -1,18 +1,17 @@
 import React, { FC, useEffect, useState } from 'react';
 import Highcharts, {
-    Chart,
     Options,
     SeriesSplineOptions,
     XAxisOptions,
     YAxisOptions,
     AxisLabelsFormatterCallbackFunction,
-    TooltipFormatterContextObject
+    Point
 } from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import { cloneDeep } from 'lodash';
 import { lightGreen, yellow, orange, red, burgundy, purple, solidAqiColors } from '../../styles';
 import { chartCategories } from '../../types';
-import { timestampToDate, debounce } from '../../utils';
+import { timestampToDate } from '../../utils';
 
 type TimeFormatter = {
     interval: number,
@@ -61,7 +60,7 @@ const options: Options = {
         enabled: false
     },
     chart: {
-        zoomType: 'x',
+        zooming: { type: 'x' },
         backgroundColor: 'rgba(0,0,0,0)',
         type: 'spline',
         style: {
@@ -96,8 +95,8 @@ const options: Options = {
     },
     tooltip: {
         shared: true,
-        formatter(this:TooltipFormatterContextObject) : string {
-            const ts = timestampToDate('%m/%d %I:%M %p', this.x);
+        formatter(this:Point) : string {
+            const ts = timestampToDate('%m/%d %I:%M %p', Number(this.category ?? this.x));
             return `${ts}<br />● ${this.points?.[0]?.series.name}: ${this.y}`;
         }
     }
@@ -206,8 +205,6 @@ interface Props {
     xCats: number[];
 }
 
-let chartComponent:Chart;
-
 export const Graph: FC<Props> = ({ useWhite, metric, timeRange, series, xCats }) => {
     const [chartOptions, setChartOptions] = useState<Options>();
 
@@ -256,29 +253,13 @@ export const Graph: FC<Props> = ({ useWhite, metric, timeRange, series, xCats })
         });
     }, [useWhite, xCats, metric, timeRange]);
 
-    useEffect(() => {
-        const fn = debounce(() => {
-            setChartOptions({
-                ...chartOptions,
-                chart: {
-                    ...options.chart,
-                    width: document.body.clientWidth
-                }
-            });
-            chartComponent.reflow();
-        }, 50);
-        const dfn = () => fn();
-        window.addEventListener('resize', dfn);
-        return () => window.removeEventListener('resize', dfn);
-    }, [chartOptions]);
 
     return (
         <HighchartsReact
-            callback={(c:Chart) => { chartComponent = c; }}
             highcharts={Highcharts}
             options={{
                 ...chartOptions,
-                series: cloneDeep(series?.[metric])
+                series: series[metric] ? [{ ...cloneDeep(series[metric]), type: 'spline' }] : []
             }}
         />
     );

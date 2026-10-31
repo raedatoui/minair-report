@@ -40,9 +40,9 @@ The [Raspberry Pi 400](https://www.raspberrypi.com/products/raspberry-pi-400/) c
 
 ### Frontend
 
-|                           Create React App                            |                            React                             |                         Material UI                          |                          Highcharts                          |
+|                           Next.js                            |                            React                             |                         Material UI                          |                          Highcharts                          |
 | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
-| ![cra](https://github.com/minair-affair/minair-report/assets/83786415/0658d9fa-516c-4dce-8499-d67e4bcf3389) | ![react-color](https://github.com/minair-affair/minair-report/assets/327971/01a14705-9574-4a65-8c92-5476755d380b) | ![mui-color](https://github.com/minair-affair/minair-report/assets/327971/39712485-03e0-4fd0-adc6-dd2c1943d674) | ![highcharts](https://github.com/minair-affair/minair-report/assets/327971/d1a825d0-72d9-4ca6-8ae6-28c873b72c53) |
+| [Next.js App Router](https://nextjs.org) | ![react-color](https://github.com/minair-affair/minair-report/assets/327971/01a14705-9574-4a65-8c92-5476755d380b) | ![mui-color](https://github.com/minair-affair/minair-report/assets/327971/39712485-03e0-4fd0-adc6-dd2c1943d674) | ![highcharts](https://github.com/minair-affair/minair-report/assets/327971/d1a825d0-72d9-4ca6-8ae6-28c873b72c53) |
 
 
 ### Backend
@@ -50,3 +50,32 @@ The [Raspberry Pi 400](https://www.raspberrypi.com/products/raspberry-pi-400/) c
 |                        Raspberry Pi 4                        |                            Flask                             |                           MariaDB                            |                           Firebase                           |                         Google Cloud                         |
 | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
 | ![raspberrypi-color](https://github.com/minair-affair/minair-report/assets/327971/71620722-df93-4452-978e-f577ba76d11e) | ![flask-color](https://github.com/minair-affair/minair-report/assets/83786415/8cf78e82-575e-4842-8b05-b5a459b72a30) | ![mariadb-color](https://github.com/minair-affair/minair-report/assets/327971/5b32edee-8311-4da9-ad74-1b45e788db8a) | ![firebase-color](https://github.com/minair-affair/minair-report/assets/327971/d78d0e31-c31a-433d-b103-95944f90b4bb) | ![googlecloud-color](https://github.com/minair-affair/minair-report/assets/327971/0b2c6b82-5cdb-42b9-b94e-8cbac34aca14) |
+
+## Local development
+
+The client uses Next.js 16, React 19, Material UI 9, TypeScript 7, and pnpm 12.
+
+```sh
+cd client
+nvm use
+pnpm install
+pnpm dev
+```
+
+Open http://localhost:3000. `pnpm start` is also an alias for the development server.
+Linting runs separately with `pnpm lint` and does not block development or builds.
+
+```sh
+pnpm typecheck
+pnpm build
+```
+
+The build exports every page to `client/out/`, including the existing video URLs.
+Firebase Hosting serves this directory using `client/firebase.json`; deploy from
+`client/` with the Firebase CLI and the existing Firebase project. The Python server
+and Google Cloud Storage data/media URLs are unchanged. Next.js serves its own
+`_next` assets; the old CRA `/static/` rewrite is no longer needed.
+
+The all-time report reads generated files from `client/public/data/history/`.
+These exports remain gitignored and must be generated or copied there before building
+a deployment that includes the report data.

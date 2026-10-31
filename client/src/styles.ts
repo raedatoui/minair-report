@@ -1,12 +1,11 @@
-import { createTheme, unstable_createMuiStrictModeTheme, createStyles, Theme } from '@material-ui/core/styles';
-
-const themeCreator = process.env.NODE_ENV === 'production' ? createTheme : unstable_createMuiStrictModeTheme;
+import { createTheme, Theme } from '@mui/material/styles';
+import { CSSObject } from '@emotion/react';
 
 const defaultTheme = createTheme();
 const purpleAir = 'rgb(170, 68, 170)';
 const purpleAirTr = 'rgba(170, 68, 170, 0.8)';
 
-export const mainTheme = themeCreator({
+export const mainTheme = createTheme({
     palette: {
         primary: {
             main: purpleAir,
@@ -15,30 +14,23 @@ export const mainTheme = themeCreator({
             main: '#11cb5f',
         },
     },
-    overrides: {
+    breakpoints: { values: { xs: 0, sm: 600, md: 960, lg: 1280, xl: 1920 } },
+    components: {
         MuiToolbar: {
-            gutters: {
-                [defaultTheme.breakpoints.up('sm')]: {
-                    paddingLeft: '12px',
-                    paddingRight: '12px',
-                },
-            },
-        },
-        MuiCardContent: {
-            root: {
-                '&:last-child': {
-                    paddingBottom: '16px',
+            styleOverrides: {
+                gutters: {
+                    [defaultTheme.breakpoints.up('sm')]: { paddingLeft: '12px', paddingRight: '12px' }
                 }
             }
         },
+        MuiCardContent: {
+            styleOverrides: { root: { '&:last-child': { paddingBottom: '16px' } } }
+        },
         MuiTableCell: {
-            root: {
-                borderBottom: 'none !important',
-                padding: '4px',
-                fontSize: '1rem'
-            }
-        }
-    },
+            styleOverrides: { root: { borderBottom: 'none !important', padding: '4px', fontSize: '1rem' } }
+        },
+        MuiButton: { defaultProps: { color: 'inherit' } }
+    }
 });
 
 const aqiAlpha = 0.25;
@@ -64,12 +56,12 @@ const purpleAirTransparent = `rgba(170, 68, 170, ${aqiAlpha2})`;
 
 const containerPadding = '40px';
 
-export const styles = (theme: Theme) => createStyles({
+export const styles = (theme: Theme) => ({
     root: {
         flexGrow: 1,
         color: 'white'
     },
-    '@keyframes fadeIn': {
+    '@keyframes minair-fadeIn': {
         from: {
             opacity: 0
         },
@@ -81,7 +73,7 @@ export const styles = (theme: Theme) => createStyles({
         position: 'fixed',
         bottom: '45px',
         right: '0.5rem',
-        animation: 'fadeIn 700ms ease-in-out 1s both',
+        animation: 'minair-fadeIn 700ms ease-in-out 1s both',
         cursor: 'pointer',
         zIndex: 1
     },
@@ -109,12 +101,7 @@ export const styles = (theme: Theme) => createStyles({
         '& div': {
             color: 'white'
         },
-        '& li[class*="App-yellowFull"]': {
-            '& p': {
-                color: 'black !important'
-            }
-        },
-        '& li[class*="jss13"]': {
+        '& li.minair-yellowFull': {
             '& p': {
                 color: 'black !important'
             }
@@ -403,12 +390,12 @@ export const styles = (theme: Theme) => createStyles({
         display: 'inline-block',
         marginRight: 12,
         fontSize: 28,
-        animation: '$historyPuff 1200ms ease-out',
+        animation: 'minair-historyPuff 1200ms ease-out',
         '@media (prefers-reduced-motion: reduce)': {
             animation: 'none'
         }
     },
-    '@keyframes historyPuff': {
+    '@keyframes minair-historyPuff': {
         from: { transform: 'translateY(12px) scale(0.6)', opacity: 0 },
         to: { transform: 'translateY(0) scale(1)', opacity: 1 }
     },
@@ -433,7 +420,7 @@ export const styles = (theme: Theme) => createStyles({
         '&.MuiFilledInput-root': {
             background: purpleAirTransparent,
             '& .MuiButtonBase-root': {
-                '& .MuiIconButton-label': {
+                '& .MuiSvgIcon-root': {
                     color: 'rgba(255,255,255,0.74)'
                 }
             }
@@ -462,7 +449,7 @@ export const styles = (theme: Theme) => createStyles({
                 color: 'white'
             },
             '& .MuiButtonBase-root': {
-                '& .MuiIconButton-label': {
+                '& .MuiSvgIcon-root': {
                     color: 'rgba(255,255,255,0.74)'
                 }
             }
@@ -592,7 +579,7 @@ export const styles = (theme: Theme) => createStyles({
         padding: '6px 12px',
         color: 'inherit',
         border: 'none',
-        '& .MuiTypography-colorPrimary': {
+        '& .MuiTypography-root': {
             fontFamily: 'Barlow Condensed, sans-serif',
             fontWeight: 700,
             letterSpacing: '0.2rem',
@@ -669,7 +656,7 @@ export const styles = (theme: Theme) => createStyles({
         textAlign: 'center',
         color: 'black'
     },
-});
+} satisfies Record<string, CSSObject>);
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const unused = {
@@ -691,3 +678,11 @@ const unused = {
         '100%': { backgroundPosition: '0% 82%' }
     }
 };
+
+export type StyleClasses = Record<Exclude<keyof ReturnType<typeof styles>, `@${string}`>, string>;
+export const classes = Object.fromEntries(
+    Object.keys(styles(mainTheme)).filter(key => !key.startsWith('@')).map(key => [key, `minair-${key}`])
+) as StyleClasses;
+export const globalStyles = Object.fromEntries(
+    Object.entries(styles(mainTheme)).map(([key, value]) => [key.startsWith('@') ? key : `.minair-${key}.minair-${key}`, value])
+);

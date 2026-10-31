@@ -1,11 +1,10 @@
 import { useEffect, useRef } from 'react';
 
 export const useInterval = (callback: () => boolean, delay: number) => {
-    const savedCallback = useRef();
+    const savedCallback = useRef(callback);
 
     // Remember the latest callback.
     useEffect(() => {
-        // @ts-ignore
         savedCallback.current = callback;
     }, [callback]);
 
@@ -13,8 +12,7 @@ export const useInterval = (callback: () => boolean, delay: number) => {
     // eslint-disable-next-line consistent-return
     useEffect(() => {
         const tick = () => {
-            // @ts-ignore
-            savedCallback.current();
+                savedCallback.current();
         };
         if (delay !== null) {
             const id = setInterval(tick, delay);

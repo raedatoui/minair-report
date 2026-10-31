@@ -1,0 +1,4 @@
+minimumReleaseAgeExclude:
+  - '@mui/x-date-pickers@9.17.0'
+  - '@mui/x-internals@9.17.0'
+  - '@types/three@0.187.0'

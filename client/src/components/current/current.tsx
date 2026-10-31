@@ -1,17 +1,17 @@
 import React, { FC } from 'react';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
-import Card from '@material-ui/core/Card';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
+import Card from '@mui/material/Card';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import { useRouter } from 'next/navigation';
 import {
     AverageLabels,
     CurrentDataFrame,
@@ -32,14 +32,15 @@ const getAverageLabel = (l: string) => {
     return l;
 };
 
-interface Props extends RouteComponentProps, StyledComponent {
+interface Props extends StyledComponent {
     dataFrame?: CurrentDataFrame
     trendsFrame?: TrendsFrame
 }
 
 const trendCellWidth = 70;
 
-const Current: FC<Props> = ({ history, useWhite, dataFrame, trendsFrame, classes }) => {
+const Current: FC<Props> = ({ useWhite, dataFrame, trendsFrame, classes }) => {
+    const router = useRouter();
     const catColorMapping = [
         classes.lightGreen,
         classes.yellow,
@@ -70,14 +71,14 @@ const Current: FC<Props> = ({ history, useWhite, dataFrame, trendsFrame, classes
                         <Typography variant="h3" component="h3" className={classes.timeStamp}>
                             { timestampToDate('%m/%d/%Y %I:%M:%S %p', dataFrame.timestamp) }
                         </Typography>
-                        <Grid item xs={12} sm={12} className={classes.card}>
+                        <Grid size={{ xs: 12, sm: 12 }} className={classes.card}>
                             <Card
                                 className={`
                                     ${classes.cardBubble}
                                     ${catColorMapping[dataFrame.aqiIdx25 || 0]}
                                     ${whiteBox}`}
                                 variant="outlined"
-                                onClick={() => history.push('/trends?param=aqi25')}
+                                onClick={() => router.push('/trends?param=aqi25')}
                             >
                                 <CardContent>
                                     <Typography variant="h5" component="h2">
@@ -107,14 +108,14 @@ const Current: FC<Props> = ({ history, useWhite, dataFrame, trendsFrame, classes
                             </Card>
                         </Grid>
 
-                        <Grid item xs={12} sm={6} className={classes.card}>
+                        <Grid size={{ xs: 12, sm: 6 }} className={classes.card}>
                             <Card
                                 variant="outlined"
                                 className={`
                                 ${classes.cardBubble} 
                                 ${classes.card2} 
                                 ${catColorMapping[dataFrame.aqiIdx100 || 0]} ${whiteBox}`}
-                                onClick={() => history.push('/trends?param=aqi100')}
+                                onClick={() => router.push('/trends?param=aqi100')}
                             >
                                 <CardContent>
                                     <Typography variant="h5" component="h2">
@@ -133,7 +134,7 @@ const Current: FC<Props> = ({ history, useWhite, dataFrame, trendsFrame, classes
                             </Card>
                         </Grid>
 
-                        <Grid item xs={12} sm={6} className={classes.card}>
+                        <Grid size={{ xs: 12, sm: 6 }} className={classes.card}>
                             <Card
                                 variant="outlined"
                                 className={`
@@ -178,7 +179,7 @@ const Current: FC<Props> = ({ history, useWhite, dataFrame, trendsFrame, classes
                             </Card>
                         </Grid>
 
-                        <Grid item xs={12} sm={6} md={3} className={classes.card}>
+                        <Grid size={{ xs: 12, sm: 6, md: 3 }} className={classes.card}>
                             <Card
                                 className={`${classes.cardBubble} ${classes.cardContainer} ${whiteBox}`}
                                 variant="outlined"
@@ -190,7 +191,7 @@ const Current: FC<Props> = ({ history, useWhite, dataFrame, trendsFrame, classes
                                     <Typography
                                         variant="body2"
                                         component="h3"
-                                        onClick={() => history.push('/trends?param=pm10')}
+                                        onClick={() => router.push('/trends?param=pm10')}
                                     >
                                         {'Particles >=1.0µm: count/dl:'} { dataFrame.pm10 }<br />
                                         Raw PM0.3 in µg/m³: { dataFrame.umCount03 }<br />
@@ -202,11 +203,11 @@ const Current: FC<Props> = ({ history, useWhite, dataFrame, trendsFrame, classes
                             </Card>
                         </Grid>
 
-                        <Grid item xs={12} sm={6} md={3} className={classes.card}>
+                        <Grid size={{ xs: 12, sm: 6, md: 3 }} className={classes.card}>
                             <Card
                                 className={`${classes.cardBubble} ${classes.cardContainer} ${whiteBox}`}
                                 variant="outlined"
-                                onClick={() => history.push('/trends?param=temperature')}
+                                onClick={() => router.push('/trends?param=temperature')}
                             >
                                 <CardContent className={classes.gray}>
                                     <Typography variant="h5" component="h2">
@@ -219,11 +220,11 @@ const Current: FC<Props> = ({ history, useWhite, dataFrame, trendsFrame, classes
                             </Card>
                         </Grid>
 
-                        <Grid item xs={12} sm={6} md={3} className={classes.card}>
+                        <Grid size={{ xs: 12, sm: 6, md: 3 }} className={classes.card}>
                             <Card
                                 className={`${classes.cardBubble} ${classes.cardContainer} ${whiteBox}`}
                                 variant="outlined"
-                                onClick={() => history.push('/trends?param=humidity')}
+                                onClick={() => router.push('/trends?param=humidity')}
                             >
                                 <CardContent className={classes.gray}>
                                     <Typography variant="h5" component="h2">
@@ -236,11 +237,11 @@ const Current: FC<Props> = ({ history, useWhite, dataFrame, trendsFrame, classes
                             </Card>
                         </Grid>
 
-                        <Grid item xs={12} sm={6} md={3} className={classes.card}>
+                        <Grid size={{ xs: 12, sm: 6, md: 3 }} className={classes.card}>
                             <Card
                                 className={`${classes.cardBubble} ${classes.cardContainer} ${whiteBox}`}
                                 variant="outlined"
-                                onClick={() => history.push('/trends?param=pressure')}
+                                onClick={() => router.push('/trends?param=pressure')}
                             >
                                 <CardContent className={classes.gray}>
                                     <Typography variant="h5" component="h2">
@@ -258,4 +259,4 @@ const Current: FC<Props> = ({ history, useWhite, dataFrame, trendsFrame, classes
     );
 };
 
-export default withRouter(Current);
+export default Current;

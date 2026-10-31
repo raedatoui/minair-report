@@ -1,12 +1,13 @@
 import React, { FC, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { SeriesSplineOptions } from 'highcharts';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import { Link } from 'react-router-dom';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Link from 'next/link';
 import { DataFrame, ComponentProps, chartCategories } from '../../types';
 import { fetchData } from '../../utils';
 import { Graph } from './graph';
@@ -33,7 +34,7 @@ interface Props extends ComponentProps {
 }
 
 const Charts:FC<Props> = ({ currentDataFrame, useWhite, classes }) => {
-    const urlParams = new URLSearchParams(window.location.search);
+    const urlParams = useSearchParams();
     const param = urlParams.get('param') || 'aqi25';
 
     const [metric, setMetric] = useState<keyof typeof chartCategories>(param);
@@ -87,8 +88,8 @@ const Charts:FC<Props> = ({ currentDataFrame, useWhite, classes }) => {
 
     return (
         <div className={classes.chartsContainer}>
-            <Box px={3} pb={2}>
-                <Button component={Link} to="/history" className={classes.songRowCellButton}>
+            <Box sx={{ px: 3, pb: 2 }}>
+                <Button component={Link} href="/history" className={classes.songRowCellButton}>
                     All-time report
                 </Button>
             </Box>

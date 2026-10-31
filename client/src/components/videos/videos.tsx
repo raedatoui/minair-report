@@ -1,21 +1,19 @@
 import React, { FC } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import ImageList from '@material-ui/core/ImageList';
-import ImageListItem from '@material-ui/core/ImageListItem';
-import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
-import Modal from '@material-ui/core/Modal';
-import Avatar from '@material-ui/core/Avatar';
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import { useRouter } from 'next/navigation';
+import Modal from '@mui/material/Modal';
+import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import clsx from 'clsx';
 import { CDN } from '../../constants';
-import { styles } from '../../styles';
 import { StyledComponent, Video } from '../../types';
 
-interface Props extends RouteComponentProps, StyledComponent {
+interface Props extends StyledComponent {
     items: Record<string, Video>,
     videoPass: boolean,
     setVideoPass: (b:boolean) => void
@@ -32,15 +30,12 @@ const getModalStyle = () => {
     };
 };
 
-const VideosPage:FC<Props> = ({ history, videoPass, setVideoPass, classes, items }) => {
+const VideosPage:FC<Props> = ({ videoPass, setVideoPass, classes, items }) => {
+    const router = useRouter();
     const matches = useMediaQuery('(max-width:960px)');
 
     const [pass, setPass] = React.useState<string>('');
     const [modalStyle] = React.useState(getModalStyle);
-
-    const handleClose = () => {
-        setVideoPass(false);
-    };
 
     const handlePass = (p: string) => {
         setPass(p);
@@ -61,7 +56,7 @@ const VideosPage:FC<Props> = ({ history, videoPass, setVideoPass, classes, items
                                 className={clsx(classes.videoTitle, { small: matches })}
                                 variant="h4"
                                 component="h4"
-                                onClick={() => history.push(`/${items[k].path}`)}
+                                onClick={() => router.push(`/${items[k].path}`)}
                                 dangerouslySetInnerHTML={{ __html: items[k].htmlTitle }}
                             />
                         </ImageListItem>
@@ -72,24 +67,18 @@ const VideosPage:FC<Props> = ({ history, videoPass, setVideoPass, classes, items
             <Modal
                 id="fiction-modal"
                 open={videoPass}
-                onClose={handleClose}
+
                 aria-labelledby="miniar-fiction-age-verification"
-                disableEscapeKeyDown
-                disableBackdropClick
                 disableAutoFocus
-                BackdropProps={{
-                    classes: {
-                        root: classes.backDrop
-                    }
-                }}
+                slotProps={{ backdrop: { className: classes.backDrop } }}
             >
                 <div style={modalStyle} className={classes.modal}>
                     <Avatar src={`${CDN}/slate.png`} variant="square" />
                     <Box>
                         <TextField
-                            InputLabelProps={{ color: 'primary' }}
+                            slotProps={{ inputLabel: { color: 'primary' } }}
                             onChange={(e) => handlePass(e.target.value)}
-                            onKeyPress={(e) => { if (e.code === 'Enter') checkPass(); }}
+                            onKeyDown={(e) => { if (e.code === 'Enter') checkPass(); }}
                         />
                     </Box>
                     <Box>
@@ -101,4 +90,4 @@ const VideosPage:FC<Props> = ({ history, videoPass, setVideoPass, classes, items
     );
 };
 
-export default withRouter(withStyles(styles)(VideosPage));
+export default VideosPage;

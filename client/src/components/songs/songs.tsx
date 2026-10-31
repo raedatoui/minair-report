@@ -1,21 +1,19 @@
 import React, { FC, useState } from 'react';
 import clsx from 'clsx';
-import { withStyles } from '@material-ui/core/styles';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableRow from '@material-ui/core/TableRow';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import Button from '@material-ui/core/Button';
-import PauseIcon from '@material-ui/icons/Pause';
-import Collapse from '@material-ui/core/Collapse';
-import Paper from '@material-ui/core/Paper';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableRow from '@mui/material/TableRow';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import Button from '@mui/material/Button';
+import PauseIcon from '@mui/icons-material/Pause';
+import Collapse from '@mui/material/Collapse';
+import Paper from '@mui/material/Paper';
 import { StyledComponent, Song } from '../../types';
-import { styles } from '../../styles';
 
 interface SongRowProps extends StyledComponent {
     song: Song,
@@ -115,4 +113,4 @@ const Songs:FC<SongsProps> = ({ songs, play, isPlaying, audio, currentIndex, use
     </TableContainer>
 );
 
-export default withStyles(styles)(Songs);
+export default Songs;

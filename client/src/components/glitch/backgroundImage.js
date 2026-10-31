@@ -1,12 +1,14 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable global-require */
-const THREE = require('three');
+import * as THREE from 'three';
+import { backgroundVertex, backgroundFragment } from './shaders';
 
 // const ratio = 2048 / 1152;
 
 export default class BackgroundImage {
     constructor(url, w, h) {
         this.url = url;
+        this.disposed = false;
         this.uniforms = {
             resolution: {
                 type: 'v2',
@@ -16,7 +18,7 @@ export default class BackgroundImage {
                 type: 'v2',
                 value: new THREE.Vector2(w, h),
             },
-            texture: {
+            uTexture: {
                 type: 't',
                 value: null,
             },
@@ -28,9 +30,10 @@ export default class BackgroundImage {
         loader.load(
             this.url,
             (tex) => {
+                if (this.disposed) { tex.dispose(); return; }
                 tex.magFilter = THREE.NearestFilter;
                 tex.minFilter = THREE.NearestFilter;
-                this.uniforms.texture.value = tex;
+                this.uniforms.uTexture.value = tex;
                 this.obj = this.createObj();
                 callback();
             }
@@ -42,10 +45,12 @@ export default class BackgroundImage {
             loader.load(
                 url,
                 (tex) => {
+                    if (this.disposed) { tex.dispose(); return; }
                     this.url = url;
                     tex.magFilter = THREE.NearestFilter;
                     tex.minFilter = THREE.NearestFilter;
-                    this.uniforms.texture.value = tex;
+                    this.uniforms.uTexture.value?.dispose();
+                    this.uniforms.uTexture.value = tex;
                     this.uniforms.imageResolution.value.set(w, h);
                     if (this.obj && this.obj.material)
                         this.obj.material.needsUpdate = true;
@@ -57,11 +62,18 @@ export default class BackgroundImage {
         return new THREE.Mesh(
             new THREE.PlaneGeometry(2, 2),
             new THREE.RawShaderMaterial({
+                glslVersion: THREE.GLSL3,
                 uniforms: this.uniforms,
-                vertexShader: document.getElementById('background-image-vs').textContent,
-                fragmentShader: document.getElementById('background-image-fs').textContent
+                vertexShader: backgroundVertex,
+                fragmentShader: backgroundFragment
             })
         );
+    }
+    dispose() {
+        this.disposed = true;
+        this.uniforms.uTexture.value?.dispose();
+        this.obj?.geometry.dispose();
+        this.obj?.material.dispose();
     }
     resize() {
         this.uniforms.resolution.value.set(document.body.clientWidth, window.innerHeight);

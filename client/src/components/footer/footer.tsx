@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-import Button from '@material-ui/core/Button';
-import Link from '@material-ui/core/Link';
-import Paper from '@material-ui/core/Paper';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import Button from '@mui/material/Button';
+import Link from '@mui/material/Link';
+import Paper from '@mui/material/Paper';
 import { StyledComponent } from '../../types';
 
 const Footer:FC<StyledComponent> = ({ classes }) => (

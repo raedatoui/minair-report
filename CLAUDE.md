@@ -9,26 +9,28 @@ Real-time indoor air quality dashboard for a PurpleAir sensor ("Minair", sensor 
 Two independent halves:
 
 - `server/` — Flask app running on a Raspberry Pi at `192.168.1.14`, backed by MariaDB.
-- `client/` — Create React App SPA (React 17 + TypeScript + Material-UI v4 + Highcharts), deployed to Firebase Hosting.
+- `client/` — Next.js static-export app (React 19 + TypeScript 7 + Material UI 9 + Highcharts), deployed to Firebase Hosting.
 
 ## Commands
 
-### Client (`cd client`, Node 24.22.2 per `.nvmrc`, Yarn 1.22.22)
+### Client (`cd client`, Node 24.22.2 per `.nvmrc`, pnpm 12.16.1)
 
 ```sh
-nvm use          # select the project's Node version
-yarn install --frozen-lockfile
-yarn start        # CRA dev server on :3000
-yarn build        # runs ./build.sh (CRA build + index.html rewrite, see below)
-yarn test         # react-scripts test (no test files exist yet)
-npx eslint src --ext .ts,.tsx    # no lint script in package.json
+nvm use
+pnpm install --frozen-lockfile
+pnpm dev          # Next.js development server on :3000; pnpm start is an alias
+pnpm typecheck    # TypeScript compiler, without emitting files
+pnpm build        # Next.js static export to out/
+pnpm lint         # standalone Biome lint; never part of dev/build
 ```
 
-React Scripts 5 provides Webpack 5. TypeScript stays on 4.9 for React Scripts compatibility;
-React 17 and Material UI 4 retain the existing component APIs. Yarn Classic is pinned in `packageManager`.
+`next.config.ts` uses `output: 'export'` and `trailingSlash: true`. Firebase Hosting
+serves `out/` using `firebase.json`. There is no runtime Node server or CRA asset
+rewrite. The generated history JSON/CSV files remain gitignored in
+`public/data/history/`; populate them before building a deployment with history data.
 
-`build.sh` stops if compilation fails, then uses Node to rewrite `/static/` → `https://www.minair.me/static/`
-in `build/index.html`. Bundles are served from the GCS bucket, not from Firebase.
+React, Next.js, Material UI, and TypeScript versions must be upgraded together with
+their peer dependencies. pnpm is pinned in `packageManager`; use `pnpm-lock.yaml`.
 
 ### Server (`cd server`)
 
@@ -77,12 +79,15 @@ The database and all Python code use snake_case. `convert_json()` in `sensor/uti
 
 ### Client layout
 
-- `components/app.tsx` — all routing (react-router v5 `Switch`), all top-level data fetching, and the audio player state. The `/:id` catch-all route resolves against a hardcoded `videoList` map.
-- The AQI category index drives the entire visual theme: `dataFrame.aqiIdx25` (0–7) indexes the `backgrounds` array and is written directly onto `document.getElementById('root').className` and `document.body.className`, bypassing React. `useWhite` (derived from the same index) is threaded through nearly every component as a prop to flip text color.
+- `app/` — Next.js App Router pages and the persistent root layout. `[video]/page.tsx` statically generates the URLs in `content/videos.ts`.
+- `components/app.tsx` — persistent app shell, live data polling, and shared audio state. Pages use `useMinair()` for data and actions. Browser APIs initialize in effects, never during server rendering.
+- The AQI category index drives the root sky background declaratively. `useWhite` is derived from the same index and passed to the existing components. The history report keeps its opaque colors independently. The body glitch class is managed by an effect.
 - `constants.ts` — the CDN base plus asset path prefixes (`/audio/`, `/videos/`, `/fans/`, `/logo/`, `/menu/`). All media lives in the GCS bucket; nothing large is in `public/`.
-- `styles.ts` — a single shared MUI `styles` object; components receive it via `WithStyles<typeof styles>` rather than defining their own.
+- `styles.ts` — shared Material UI theme, CSS rules, and typed `minair-*` class names. `app/providers.tsx` installs them with Emotion/Material UI GlobalStyles and the App Router cache provider. Components retain their existing `classes` props; there is no JSS or `withStyles`.
 - `components/glitch/` — a self-contained three.js + GLSL effect (`.vs`/`.fs` files) that takes over the whole page when `showHeader` is false (triggered from the fiction page).
 
-### ESLint
+### Linting
 
-airbnb + airbnb-typescript + airbnb/hooks, with 4-space indent, `max-len` 150, and `@typescript-eslint/no-explicit-any` as an error. Note `curly: ["error", "multi"]` — single-statement `if` bodies are written without braces throughout.
+Biome replaces the CRA ESLint integration. Run `pnpm lint` explicitly. It does not
+block `pnpm dev` or `pnpm build`. Keep existing four-space indentation and single
+quotes; avoid mass formatting unrelated code. `pnpm format` is an explicit opt-in.

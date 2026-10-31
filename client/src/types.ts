@@ -1,5 +1,4 @@
-import { WithStyles } from '@material-ui/core/styles';
-import { styles } from './styles';
+import { StyleClasses } from './styles';
 
 export type StatItem = {
     value: number;
@@ -121,7 +120,8 @@ export type Media = {
     poster: string
 };
 
-export interface StyledComponent extends WithStyles<typeof styles> {
+export interface StyledComponent {
+    classes: StyleClasses;
     useWhite: boolean
 }
 

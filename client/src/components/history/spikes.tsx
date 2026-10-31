@@ -1,19 +1,19 @@
 /* eslint-disable react/no-array-index-key -- Immutable exports preserve duplicate source rows as separate occurrences. */
 import React, { FC, useEffect, useState } from 'react';
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Collapse from '@material-ui/core/Collapse';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Typography from '@material-ui/core/Typography';
-import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowUp from '@material-ui/icons/KeyboardArrowUp';
-import Pagination from '@material-ui/lab/Pagination';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import Collapse from '@mui/material/Collapse';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Typography from '@mui/material/Typography';
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUp from '@mui/icons-material/KeyboardArrowUp';
+import Pagination from '@mui/material/Pagination';
 import { historyDataPath } from '../../constants';
 import { StyledComponent } from '../../types';
 import { opaqueAqiPlotBands as aqiPlotBands } from '../trends/graph';
@@ -80,7 +80,7 @@ const SpikeGroupRow: FC<Props & { group: SpikeGroup }> = ({ group, classes, time
             <TableRow>
                 <TableCell colSpan={2} style={{ paddingTop: 0, paddingBottom: 0 }}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Box id={detailsId} my={2}>
+                        <Box sx={{ my: 2 }} id={detailsId}>
                             {error && (
                                 <Box role="alert">
                                     <Typography>These readings could not be loaded.</Typography>
@@ -121,7 +121,7 @@ const SpikeGroupRow: FC<Props & { group: SpikeGroup }> = ({ group, classes, time
                                 </TableContainer>
                             )}
                             {group.count > 100 && (
-                                <Box mt={2}>
+                                <Box sx={{ mt: 2 }}>
                                     <Pagination
                                         page={page}
                                         count={Math.ceil(group.count / 100)}
@@ -175,7 +175,7 @@ const SpikeBandRow: FC<BandProps> = ({ band, groups, ...props }) => {
             <TableRow>
                 <TableCell colSpan={2} style={{ paddingTop: 0, paddingBottom: 0 }}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Box id={detailsId} my={2}>
+                        <Box sx={{ my: 2 }} id={detailsId}>
                             <Table size="small" className={props.classes.historyTable} aria-label={`${band.label.text} spike values`}>
                                 <TableHead>
                                     <TableRow>

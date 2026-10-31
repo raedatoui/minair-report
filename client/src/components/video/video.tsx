@@ -1,8 +1,9 @@
-import React, { FC } from 'react';
+import { track } from '../../utils/analytics';
+import React, { FC, useEffect } from 'react';
 import clsx from 'clsx';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
 import { StyledComponent, Video } from '../../types';
 
 interface Props extends StyledComponent {
@@ -11,8 +12,7 @@ interface Props extends StyledComponent {
 
 const VideoPage: FC<Props> = ({ video, classes }) => {
     const matches = useMediaQuery('(max-width:960px)');
-    // @ts-ignore
-    gtag('pageview', video.path);
+    useEffect(() => { track('pageview', video.path); }, [video.path]);
     return (
         <Container className={classes.videoContainer}>
             <video preload="auto" controls poster={video.poster} autoPlay>

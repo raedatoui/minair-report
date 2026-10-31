@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Rect } from '../types';
 
 export const useBbox = () => {
-    const ref = useRef<HTMLElement>();
+    const ref = useRef<HTMLElement | null>(null);
     const [bbox, setBbox] = useState<Rect>({
         x: 0, y: 0
     });

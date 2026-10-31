@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import clsx from 'clsx';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
-import { Typography } from '@material-ui/core';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { Typography } from '@mui/material';
 import { StyledComponent } from '../../types';
 
 const Donate: FC<StyledComponent> = ({ classes }) => {
