@@ -2,8 +2,8 @@
 
 A Python 3.14 project managed with [uv](https://docs.astral.sh/uv/), with Ruff
 configured in `pyproject.toml`. DuckDB processes the large sensor CSV on disk;
-Python receives aggregates and small batches. The analyzer produces an offline
-HTML report and the data for the client's `/all-time` page.
+Python receives aggregates and small batches. The analyzer produces CSV and JSON
+exports for the client's `/all-time` page.
 
 ## Run
 
@@ -13,17 +13,11 @@ From the repository root:
 cd analysis
 uv sync --locked
 uv run analyze_minair.py /absolute/path/to/readings.csv
-open analysis-report/index.html
 ```
 
 uv manages the project's `.venv`, DuckDB, and Ruff. `.python-version` selects
 Python 3.14; `uv.lock` records resolved dependency versions. The old standalone
 `requirements-analysis.txt` is replaced by `pyproject.toml`.
-
-Keep `analyze_minair.py` and `minair-analysis.html` together. Opening the template
-directly shows setup instructions; running the analyzer produces the populated
-report. The generated HTML report works offline, without a server or JavaScript
-packages. No example readings are presented as real history.
 
 Optional settings:
 
@@ -36,7 +30,7 @@ uv run analyze_minair.py /absolute/path/to/readings.csv \
 ```
 
 The default output is `analysis/analysis-report/`, regardless of the current
-working directory. `--output` selects another report directory. The source CSV
+working directory. `--output` selects another export directory. The source CSV
 is read only and is imported again on each run.
 
 ## Client data
@@ -85,20 +79,19 @@ update the environment. Commit both `pyproject.toml` and `uv.lock`.
 
 ## Outputs
 
-- `index.html`: interactive monthly mean/peak charts, metric and year selectors,
-  monthly tables, all-time averages, AQI category shares, and the top 100 spikes.
 - `monthly.csv`: count, average, minimum, and maximum for each numeric sensor
   metric; observed days; approximate PM2.5 median/p95; spike and 420 counts.
 - `spikes.csv`: every qualifying PM2.5 spike, highest first.
 - `420.csv`: every reading where **either AQI column equals exactly 420**.
-- `420/index.html`, `420/page-2.html`, etc.: every matching reading, 100 per page,
-  with a little cloud-and-heart tribute for each one. A row matching both columns
-  appears once. The pages work as local files, with no fetch requests.
-- `summary.json`: the compact data used by the main report.
+- `summary.json`: monthly and all-time statistics, AQI category shares, and the
+  top 100 spikes.
 
-Share the whole output folder to retain downloads and the paginated archive.
-The main HTML's charts and tables are embedded. Output files with the same names
-are replaced on subsequent runs; use a new `--output` folder to keep each run.
+The app staging directory also contains `spikes/index.json`, paginated readings
+in `spikes/aqi-<value>/page-<number>.json`, and `420/page-<number>.json`. Each page
+holds up to 100 readings; a row matching both AQI columns at 420 appears once.
+
+Output files with the same names are replaced on subsequent runs; use new
+`--output` and `--app-output` directories to keep each run.
 
 The default timezone follows the backend's US Eastern setting. A spike is one
 recorded **PM2.5 AQI strictly above 150**, not a detected episode or a statistical

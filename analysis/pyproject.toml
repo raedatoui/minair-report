@@ -1,7 +1,7 @@
 [project]
 name = "minair-analysis"
 version = "0.1.0"
-description = "Analyze Minair sensor CSV exports and generate offline and all-time reports."
+description = "Analyze Minair sensor CSV exports and generate all-time report data."
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [

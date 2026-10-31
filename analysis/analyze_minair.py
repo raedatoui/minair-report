@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Analyze a large Minair CSV and write an offline HTML report. Requires duckdb."""
+"""Analyze a large Minair CSV and export JSON/CSV report data. Requires duckdb."""
 
 import argparse
 import csv
@@ -152,15 +152,6 @@ def analyze(connection, args, output):
     }
 
 
-def render_report(data):
-    template = (HERE / "minair-analysis.html").read_text(encoding="utf-8")
-    # Prevent a CSV filename or identifier from terminating the JSON script tag.
-    encoded = json.dumps(data, ensure_ascii=False, allow_nan=False, separators=(",", ":"))
-    safe_json = encoded.replace("&", "\\u0026").replace("<", "\\u003c").replace(">", "\\u003e")
-    return template.replace('<script id="report-data" type="application/json">null</script>',
-                            f'<script id="report-data" type="application/json">{safe_json}</script>')
-
-
 def export_spike_groups(source, app_output):
     """Page the complete, AQI-sorted spike export for expandable React rows."""
     output = app_output / "spikes"
@@ -190,7 +181,6 @@ def export_spike_groups(source, app_output):
 
 def write_reports(connection, data, output, app_output):
     (output / "summary.json").write_text(json.dumps(data, ensure_ascii=False, allow_nan=False) + "\n", encoding="utf-8")
-    (output / "index.html").write_text(render_report(data), encoding="utf-8")
     app_output.mkdir(parents=True, exist_ok=True)
     if app_output != output:
         for name in ("summary.json", "monthly.csv", "spikes.csv", "420.csv"):
@@ -199,8 +189,6 @@ def write_reports(connection, data, output, app_output):
     total = data["quality"]["total_420"]
     if not total:
         return
-    archive_dir = output / "420"
-    archive_dir.mkdir(exist_ok=True)
     app_archive_dir = app_output / "420"
     app_archive_dir.mkdir(exist_ok=True)
     result = connection.execute(f"""SELECT {EVENT_COLUMNS} FROM measurements
@@ -213,8 +201,6 @@ def write_reports(connection, data, output, app_output):
             "total": total, "timezone": data["timezone"],
             "rows": [dict(zip(names, row)) for row in batch],
         }
-        name = "index.html" if page == 1 else f"page-{page}.html"
-        (archive_dir / name).write_text(render_report(archive), encoding="utf-8")
         (app_archive_dir / f"page-{page}.json").write_text(
             json.dumps(archive, ensure_ascii=False, allow_nan=False) + "\n", encoding="utf-8")
         page += 1
@@ -260,7 +246,7 @@ def main():
             print("Calculating monthly averages, peaks, and the 420 archive…", flush=True)
             data = analyze(connection, args, args.output)
             write_reports(connection, data, args.output, args.app_output)
-    print(f"Report: {args.output / 'index.html'}")
+    print(f"Analysis data: {args.output}")
     print(f"App data: {args.app_output} (upload to gs://www.minair.me/data/history/ for /all-time)")
     print(f"{data['totals']['readings']:,} dated readings; {data['quality']['total_420']:,} exact 420 matches.")
 

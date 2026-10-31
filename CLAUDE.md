@@ -10,7 +10,7 @@ Three independent parts:
 
 - `server/` — Flask app running on a Raspberry Pi at `192.168.1.14`, backed by MariaDB.
 - `client/` — Next.js static-export app (React 19 + TypeScript 7 + Material UI 9 + Highcharts), deployed to Firebase Hosting.
-- `analysis/` — Python 3.14 CSV analyzer and offline report template, managed with uv and Ruff.
+- `analysis/` — Python 3.14 CSV analyzer with JSON/CSV exports, managed with uv and Ruff.
 
 ## Commands
 
@@ -46,7 +46,7 @@ uv run ruff format .
 ```
 
 Dependencies and Ruff configuration live in `pyproject.toml`; commit `uv.lock`.
-The analyzer writes the offline report to `analysis-report/` and stages app data
+The analyzer writes CSV/JSON exports to `analysis-report/` and stages app data
 in `../client/public/data/history/`. Upload generated data to the GCS bucket to
 update `/all-time`. Source CSVs, reports, scratch data, and `.venv` are gitignored.
 

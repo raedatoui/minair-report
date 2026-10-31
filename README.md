@@ -92,7 +92,7 @@ gitignored in `client/public/data/history/`; upload them to
 
 ## Historical analysis
 
-The CSV analyzer and offline report template live in `analysis/`, a Python 3.14
+The CSV analyzer lives in `analysis/`, a Python 3.14
 project managed with uv and Ruff. From the repository root:
 
 ```sh
