@@ -71,11 +71,21 @@ pnpm build
 ```
 
 The build exports every page to `client/out/`, including the existing video URLs.
-Firebase Hosting serves this directory using `client/firebase.json`; deploy from
-`client/` with the Firebase CLI and the existing Firebase project. The Python server
-and Google Cloud Storage data/media URLs are unchanged. Next.js serves its own
-`_next` assets; the old CRA `/static/` rewrite is no longer needed.
+From `client/`, deploy to the existing Firebase Hosting site:
 
-The all-time report reads generated files from `client/public/data/history/`.
-These exports remain gitignored and must be generated or copied there before building
-a deployment that includes the report data.
+```sh
+pnpm exec firebase login # only needed if you are not already signed in
+pnpm run deploy
+```
+
+`pnpm run deploy` builds the client, then publishes `out/` to the `minair` site in
+project `api-project-992432653598`. The Firebase CLI is a local dev dependency;
+`client/firebase.json` and `client/.firebaserc` hold the hosting configuration.
+A failed build stops deployment. The Python server and Google Cloud Storage
+data/media URLs are unchanged. Next.js serves its own `_next` assets; the old
+CRA `/static/` rewrite is no longer needed.
+
+The all-time report reads generated JSON/CSV files from
+`https://storage.googleapis.com/www.minair.me/data/history/`. Local exports remain
+gitignored in `client/public/data/history/`; upload them to
+`gs://www.minair.me/data/history/` when regenerating the report.

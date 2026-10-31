@@ -4,7 +4,7 @@ export const audio = '/audio/';
 export const menu = '/menu/';
 export const logo = '/logo/';
 export const videos = '/videos/';
-export const historyDataPath = '/data/history';
+export const historyDataPath = `${CDN}/data/history`;
 
 const dev = false;
 

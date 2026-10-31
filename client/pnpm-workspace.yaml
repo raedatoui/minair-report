@@ -1,3 +1,6 @@
+allowBuilds:
+  protobufjs: true
+  re2: true
 minimumReleaseAgeExclude:
   - '@mui/x-date-pickers@9.17.0'
   - '@mui/x-internals@9.17.0'

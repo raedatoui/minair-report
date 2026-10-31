@@ -15,14 +15,22 @@ body {
 }
 
 #root {
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-attachment: fixed;
     min-height: 100%;
     display: flex;
     cursor: url('https://storage.googleapis.com/www.minair.me/logo/cursor-sm.png'), auto;
     position:relative;
+    isolation: isolate;
+}
+
+#root:not(.glitch)::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 button:focus, button:hover {
@@ -63,19 +71,19 @@ div[role=presentation].MuiPopover-root {
     .app {
       width: 100%;
     }
-    #root.lightGreen {
+    #root.lightGreen::before {
       background-image: url(https://storage.googleapis.com/www.minair.me/skies/lightGreen.jpeg);
     }
-    #root.yellow {
+    #root.yellow::before {
       background-image: url(https://storage.googleapis.com/www.minair.me/skies/yellow.jpeg);
     }
-    #root.orange {
+    #root.orange::before {
       background-image: url(https://storage.googleapis.com/www.minair.me/skies/orange.jpeg);
     }
-    #root.red {
+    #root.red::before {
       background-image: url(https://storage.googleapis.com/www.minair.me/skies/red.jpeg);
     }
-    #root.burgundy {
+    #root.burgundy::before {
       background-image: url(https://storage.googleapis.com/www.minair.me/skies/burgundy.jpeg);
     }
     body.glitch, #root.glitch {

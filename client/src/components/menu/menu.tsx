@@ -150,7 +150,7 @@ const Menu: FC<Props> = ({ currentIndex, play, songs, classes }) => {
                     icon={(
                         <Avatar
                             className={clsx(classes.menuIcon, { large: matches, xlarge: xmatches })}
-                            src={isTrends ? '/images/all-time.png' : `${CDN}${menuPath}trends.png`}
+                            src={`${CDN}${menuPath}${isTrends ? 'all-time' : 'trends'}.png`}
                             alt={isTrends ? 'All-time highs' : 'Trends'}
                             variant="square"
                         />

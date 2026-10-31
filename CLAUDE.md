@@ -21,13 +21,16 @@ pnpm install --frozen-lockfile
 pnpm dev          # Next.js development server on :3000; pnpm start is an alias
 pnpm typecheck    # TypeScript compiler, without emitting files
 pnpm build        # Next.js static export to out/
+pnpm run deploy   # build, then deploy Hosting to the existing minair site
 pnpm lint         # standalone Biome lint; never part of dev/build
 ```
 
 `next.config.ts` uses `output: 'export'` and `trailingSlash: true`. Firebase Hosting
-serves `out/` using `firebase.json`. There is no runtime Node server or CRA asset
-rewrite. The generated history JSON/CSV files remain gitignored in
-`public/data/history/`; populate them before building a deployment with history data.
+serves `out/` using `firebase.json` (site `minair`) and `.firebaserc` (project
+`api-project-992432653598`). There is no runtime Node server or CRA asset
+rewrite. The all-time report reads its JSON/CSV files from the GCS bucket at
+`data/history/`. Local exports remain gitignored in `public/data/history/`; upload
+them to `gs://www.minair.me/data/history/` when regenerating the report.
 
 React, Next.js, Material UI, and TypeScript versions must be upgraded together with
 their peer dependencies. pnpm is pinned in `packageManager`; use `pnpm-lock.yaml`.
