@@ -24,5 +24,6 @@ yarn-error.log*
 
 public/media
 public/favicons
+public/data/history/
 
 .idea/

@@ -5,6 +5,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
+import { Link } from 'react-router-dom';
 import { DataFrame, ComponentProps, chartCategories } from '../../types';
 import { fetchData } from '../../utils';
 import { Graph } from './graph';
@@ -85,6 +87,11 @@ const Charts:FC<Props> = ({ currentDataFrame, useWhite, classes }) => {
 
     return (
         <div className={classes.chartsContainer}>
+            <Box px={3} pb={2}>
+                <Button component={Link} to="/history" className={classes.songRowCellButton}>
+                    All-time report
+                </Button>
+            </Box>
             <Box>
                 <FormControl variant="filled" className={classes.formControl}>
                     <InputLabel className={classes.chartSelector}>Parameter</InputLabel>

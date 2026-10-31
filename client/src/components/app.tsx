@@ -18,6 +18,7 @@ import Current from './current';
 import Fans from './fans';
 import Menu from './menu';
 import Trends from './trends';
+import History from './history';
 import Fiction from './fiction';
 import Songs from './songs';
 import Glitch from './glitch';
@@ -236,6 +237,10 @@ const App: FC<Props> = ({ classes }) => {
                                     classes={classes}
                                     useWhite={useWhite}
                                 />
+                            </Route>
+
+                            <Route path="/history" exact>
+                                <History classes={classes} useWhite={useWhite} />
                             </Route>
 
                             <Route path="/songs" exact>

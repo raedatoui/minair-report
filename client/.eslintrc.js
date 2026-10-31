@@ -9,6 +9,11 @@ module.exports = {
         "project": './tsconfig.json',
     },
     "rules": {
+        "react/function-component-definition": ["error", { "namedComponents": ["arrow-function", "function-declaration"], "unnamedComponents": "arrow-function" }],
+        "react/jsx-no-useless-fragment": ["error", { "allowExpressions": true }],
+        "react/no-unused-prop-types": "warn",
+        "no-restricted-exports": ["error", { "restrictedNamedExports": ["then"] }],
+        "import/extensions": ["error", "ignorePackages", { "js": "ignore", "mjs": "never", "jsx": "never", "ts": "never", "tsx": "never" }],
         "@typescript-eslint/comma-dangle": "off",
         "@typescript-eslint/explicit-function-return-type": "off",
         "@typescript-eslint/explicit-member-accessibility": "off",

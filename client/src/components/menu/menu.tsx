@@ -179,15 +179,19 @@ const Menu: FC<Props> = ({ currentIndex, play, songs, history, classes }) => {
                         <>
                             <Avatar
                                 ref={donateSrcRef as React.RefObject<HTMLDivElement>}
-                                className={clsx(`${classes.menuIcon} ${classes.donateIconPlace}`,
-                                    { large: matches, xlarge: xmatches })}
+                                className={clsx(
+                                    `${classes.menuIcon} ${classes.donateIconPlace}`,
+                                    { large: matches, xlarge: xmatches }
+                                )}
                                 variant="square"
                             />
                             <Avatar
                                 onClick={() => navigate('donations')}
                                 ref={donateRef as React.RefObject<HTMLDivElement>}
-                                className={clsx(`${classes.menuIcon} ${classes.donateIcon}`,
-                                    { large: matches, xlarge: xmatches })}
+                                className={clsx(
+                                    `${classes.menuIcon} ${classes.donateIcon}`,
+                                    { large: matches, xlarge: xmatches }
+                                )}
                                 src={`${CDN}${menuPath}donations.gif`}
                                 variant="square"
                             />

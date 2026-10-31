@@ -193,7 +193,7 @@ const Fans: FC<ComponentProps> = ({ useWhite, classes }) => {
                     if (v.type === 'image') return (
                         <FanImage useWhite={useWhite} image={v} key={v.id} classes={classes} />
                     );
-                    return <></>;
+                    return null;
                 })}
             </div>
         </div>

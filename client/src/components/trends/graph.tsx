@@ -10,7 +10,7 @@ import Highcharts, {
 } from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import { cloneDeep } from 'lodash';
-import { lightGreen, yellow, orange, red, burgundy, purple } from '../../styles';
+import { lightGreen, yellow, orange, red, burgundy, purple, solidAqiColors } from '../../styles';
 import { chartCategories } from '../../types';
 import { timestampToDate, debounce } from '../../utils';
 
@@ -103,13 +103,13 @@ const options: Options = {
     }
 };
 
-const aqiPlotBands = [
+export const aqiPlotBands = [
     {
         from: 0,
         to: 50,
         color: lightGreen,
         label: {
-            text: '<span>Good</span>',
+            text: 'Good',
             useHtml: true
         }
     }, {
@@ -191,6 +191,12 @@ const aqiPlotBands = [
         }
     }
 ];
+
+export const opaqueAqiPlotBands = aqiPlotBands.map((band, index) => ({
+    ...band,
+    color: solidAqiColors[Math.min(index, solidAqiColors.length - 1)],
+    label: { ...band.label, style: { color: band.from >= 201 ? '#fff' : '#000' } }
+}));
 
 interface Props {
     useWhite: boolean;
@@ -276,4 +282,40 @@ export const Graph: FC<Props> = ({ useWhite, metric, timeRange, series, xCats })
             }}
         />
     );
+};
+
+interface HistoryGraphProps {
+    useWhite: boolean;
+    months: string[];
+    averages: (number | null)[];
+    peaks: (number | null)[];
+    unit: string;
+    isAqi: boolean;
+}
+
+export const HistoryGraph: FC<HistoryGraphProps> = ({ useWhite, months, averages, peaks, unit, isAqi }) => {
+    const color = useWhite ? '#fff' : '#000';
+    const historyOptions: Options = {
+        ...options,
+        chart: { ...options.chart, type: 'line', height: 420, backgroundColor: '#fff' },
+        xAxis: {
+            categories: months,
+            tickInterval: Math.max(1, Math.ceil(months.length / 12)),
+            labels: { rotation: -45, style: { color } }
+        },
+        yAxis: {
+            ...options.yAxis,
+            title: { text: unit, style: { color } },
+            labels: { style: { color } },
+            plotBands: isAqi ? opaqueAqiPlotBands : []
+        },
+        legend: { enabled: true, itemStyle: { color }, itemHoverStyle: { color } },
+        tooltip: { shared: true, valueDecimals: 1, valueSuffix: ` ${unit}`, backgroundColor: '#fff' },
+        series: [
+            { type: 'line', name: 'Monthly average', data: averages, color, lineWidth: 3, connectNulls: false },
+            { type: 'line', name: 'Highest reading', data: peaks, color, dashStyle: 'ShortDash', lineWidth: 1, connectNulls: false }
+        ]
+    };
+
+    return <HighchartsReact highcharts={Highcharts} options={historyOptions} />;
 };

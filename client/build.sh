@@ -1,4 +1,4 @@
 #!/bin/sh
+set -eu
 react-scripts build
-templ=$(<build/index.html)
-echo "${templ///static/https://www.minair.me/static}" > build/index.html
+node -e 'const fs = require("node:fs"); const file = "build/index.html"; fs.writeFileSync(file, fs.readFileSync(file, "utf8").replaceAll("/static/", "https://www.minair.me/static/"));'

@@ -58,6 +58,7 @@ export const orange = `rgba(255, 118, 0, ${aqiAlpha3})`;
 export const red = `rgba(255, 0, 0, ${aqiAlpha3})`;
 export const burgundy = `rgba(153, 0, 73, ${aqiAlpha3})`;
 export const purple = `rgba(126, 0, 35, ${aqiAlpha3})`;
+export const solidAqiColors = ['#00e000', '#ffff00', '#ff7600', '#ff0000', '#990049', '#7e0023'];
 
 const purpleAirTransparent = `rgba(170, 68, 170, ${aqiAlpha2})`;
 
@@ -349,6 +350,76 @@ export const styles = (theme: Theme) => createStyles({
         width: '100%',
         maxWidth: '100%'
     },
+    historyPage: {
+        color: '#1b1b1b'
+    },
+    historyCard: {
+        background: 'linear-gradient(158deg, #ffbfff 0%, #bfffff 80%)',
+        color: '#1b1b1b',
+        height: '100%'
+    },
+    historyContent: {
+        padding: '24px !important',
+        textAlign: 'left'
+    },
+    historyControls: {
+        display: 'flex',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        gap: 12,
+        marginBottom: 16
+    },
+    historySelect: {
+        left: 0,
+        flexDirection: 'column',
+        margin: 0,
+        maxWidth: '100%',
+        '& .MuiFilledInput-root': {
+            backgroundColor: '#f0e6f5',
+            '&:hover, &.Mui-focused': {
+                backgroundColor: '#e5d8ee'
+            }
+        }
+    },
+    historyTable: {
+        backgroundColor: '#fff',
+        color: '#1b1b1b',
+        '& th, & td': {
+            padding: '10px 8px',
+            color: 'inherit'
+        },
+        '& th': {
+            whiteSpace: 'nowrap',
+            fontWeight: 700
+        }
+    },
+    historySpikeRow: {
+        cursor: 'pointer',
+        '&:hover': {
+            backgroundColor: '#eee'
+        }
+    },
+    historyCloud: {
+        display: 'inline-block',
+        marginRight: 12,
+        fontSize: 28,
+        animation: '$historyPuff 1200ms ease-out',
+        '@media (prefers-reduced-motion: reduce)': {
+            animation: 'none'
+        }
+    },
+    '@keyframes historyPuff': {
+        from: { transform: 'translateY(12px) scale(0.6)', opacity: 0 },
+        to: { transform: 'translateY(0) scale(1)', opacity: 1 }
+    },
+    historyToast: {
+        backgroundColor: purpleAir,
+        borderRadius: 30,
+        '& .MuiSnackbarContent-message': {
+            display: 'flex',
+            alignItems: 'center'
+        }
+    },
     formControl: {
         margin: theme.spacing(1),
         minWidth: 120,
@@ -457,6 +528,10 @@ export const styles = (theme: Theme) => createStyles({
         fontStyle: 'italic',
         textShadow: 'rgb(0 255 255) -2px 0px 0px, rgb(255 0 255) 2px 0px 0px',
         letterSpacing: '0.2rem',
+        '&.historyTitle': {
+            fontSize: theme.typography.h3.fontSize,
+            textTransform: 'uppercase'
+        },
         '&.small': {
             fontSize: '1.2rem'
         }
@@ -575,6 +650,10 @@ export const styles = (theme: Theme) => createStyles({
         color: 'black',
         textAlign: 'center',
         letterSpacing: '0.2rem',
+        '&.historyTitle': {
+            fontSize: theme.typography.h3.fontSize,
+            textTransform: 'uppercase'
+        },
         '&.small': {
             fontSize: '2rem'
         }

@@ -13,16 +13,22 @@ Two independent halves:
 
 ## Commands
 
-### Client (`cd client`, Node 16.20.2 per `.nvmrc`, yarn)
+### Client (`cd client`, Node 24.22.2 per `.nvmrc`, Yarn 1.22.22)
 
 ```sh
+nvm use          # select the project's Node version
+yarn install --frozen-lockfile
 yarn start        # CRA dev server on :3000
 yarn build        # runs ./build.sh (CRA build + index.html rewrite, see below)
 yarn test         # react-scripts test (no test files exist yet)
 npx eslint src --ext .ts,.tsx    # no lint script in package.json
 ```
 
-`build.sh` post-processes `build/index.html`, rewriting `/static` → `https://www.minair.me/static`. Bundles are served from the GCS bucket, not from Firebase.
+React Scripts 5 provides Webpack 5. TypeScript stays on 4.9 for React Scripts compatibility;
+React 17 and Material UI 4 retain the existing component APIs. Yarn Classic is pinned in `packageManager`.
+
+`build.sh` stops if compilation fails, then uses Node to rewrite `/static/` → `https://www.minair.me/static/`
+in `build/index.html`. Bundles are served from the GCS bucket, not from Firebase.
 
 ### Server (`cd server`)
 
