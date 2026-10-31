@@ -6,10 +6,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Real-time indoor air quality dashboard for a PurpleAir sensor ("Minair", sensor index `87629`) in Brooklyn, plus a pile of fan content (songs, videos, erotic fiction) accumulated during pandemic-era Friday hangouts. Live at https://minair.me.
 
-Two independent halves:
+Three independent parts:
 
 - `server/` — Flask app running on a Raspberry Pi at `192.168.1.14`, backed by MariaDB.
 - `client/` — Next.js static-export app (React 19 + TypeScript 7 + Material UI 9 + Highcharts), deployed to Firebase Hosting.
+- `analysis/` — Python 3.14 CSV analyzer and offline report template, managed with uv and Ruff.
 
 ## Commands
 
@@ -34,6 +35,20 @@ them to `gs://www.minair.me/data/history/` when regenerating the report.
 
 React, Next.js, Material UI, and TypeScript versions must be upgraded together with
 their peer dependencies. pnpm is pinned in `packageManager`; use `pnpm-lock.yaml`.
+
+### Analysis (`cd analysis`, Python 3.14)
+
+```sh
+uv sync --locked
+uv run analyze_minair.py /absolute/path/to/readings.csv
+uv run ruff check .
+uv run ruff format .
+```
+
+Dependencies and Ruff configuration live in `pyproject.toml`; commit `uv.lock`.
+The analyzer writes the offline report to `analysis-report/` and stages app data
+in `../client/public/data/history/`. Upload generated data to the GCS bucket to
+update `/all-time`. Source CSVs, reports, scratch data, and `.venv` are gitignored.
 
 ### Server (`cd server`)
 

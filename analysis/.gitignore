@@ -1,0 +1,12 @@
+.venv/
+.ruff_cache/
+__pycache__/
+*.py[cod]
+
+# Source data, generated reports, and DuckDB scratch files.
+*.csv
+*.csv.gz
+analysis-report/
+work/
+*.duckdb
+*.duckdb.*

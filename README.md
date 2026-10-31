@@ -89,3 +89,17 @@ The all-time report reads generated JSON/CSV files from
 `https://storage.googleapis.com/www.minair.me/data/history/`. Local exports remain
 gitignored in `client/public/data/history/`; upload them to
 `gs://www.minair.me/data/history/` when regenerating the report.
+
+## Historical analysis
+
+The CSV analyzer and offline report template live in `analysis/`, a Python 3.14
+project managed with uv and Ruff. From the repository root:
+
+```sh
+cd analysis
+uv sync --locked
+uv run analyze_minair.py /absolute/path/to/readings.csv
+```
+
+See [the analysis guide](analysis/README.md) for options, generated outputs,
+and uploading refreshed data to Google Cloud Storage.
