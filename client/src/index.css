@@ -18,6 +18,7 @@ body {
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+    background-attachment: fixed;
     min-height: 100%;
     display: flex;
     cursor: url('https://storage.googleapis.com/www.minair.me/logo/cursor-sm.png'), auto;
@@ -34,6 +35,8 @@ p {
 
 .app {
     flex: 1;
+    max-width: 1280px;
+    margin: 0 auto;
     padding-bottom: 65px;
 }
 

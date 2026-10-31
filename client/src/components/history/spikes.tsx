@@ -16,7 +16,7 @@ import KeyboardArrowUp from '@mui/icons-material/KeyboardArrowUp';
 import Pagination from '@mui/material/Pagination';
 import { historyDataPath } from '../../constants';
 import { StyledComponent } from '../../types';
-import { opaqueAqiPlotBands as aqiPlotBands } from '../trends/graph';
+import { historyAqiPlotBands as aqiPlotBands } from '../trends/graph';
 import { Reading, SpikeGroup, SpikePage } from './types';
 
 interface Props extends Pick<StyledComponent, 'classes'> {
@@ -78,7 +78,7 @@ const SpikeGroupRow: FC<Props & { group: SpikeGroup }> = ({ group, classes, time
                 <TableCell align="right">{number(group.count)}</TableCell>
             </TableRow>
             <TableRow>
-                <TableCell colSpan={2} style={{ paddingTop: 0, paddingBottom: 0 }}>
+                <TableCell colSpan={2} className={classes.historyDetailsCell} style={{ paddingTop: 0, paddingBottom: 0 }}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box sx={{ my: 2 }} id={detailsId}>
                             {error && (
@@ -89,8 +89,8 @@ const SpikeGroupRow: FC<Props & { group: SpikeGroup }> = ({ group, classes, time
                             )}
                             {!data && !error && <CircularProgress size={24} aria-label={`Loading readings for AQI ${group.aqi}`} />}
                             {data && (
-                                <TableContainer>
-                                    <Table size="small" className={classes.historyTable} aria-label={`Raw readings for PM2.5 AQI ${group.aqi}`}>
+                                <TableContainer tabIndex={0} role="region" aria-label={`Raw readings for PM2.5 AQI ${group.aqi}`}>
+                                    <Table size="small" className={`${classes.historyTable} ${classes.historyWideTable}`} aria-label={`Raw readings for PM2.5 AQI ${group.aqi}`}>
                                         <TableHead>
                                             <TableRow>
                                                 <TableCell>Recorded at ({timezone})</TableCell>
@@ -173,10 +173,10 @@ const SpikeBandRow: FC<BandProps> = ({ band, groups, ...props }) => {
                 <TableCell align="right">{number(count)}</TableCell>
             </TableRow>
             <TableRow>
-                <TableCell colSpan={2} style={{ paddingTop: 0, paddingBottom: 0 }}>
+                <TableCell colSpan={2} className={props.classes.historyDetailsCell} style={{ paddingTop: 0, paddingBottom: 0 }}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box sx={{ my: 2 }} id={detailsId}>
-                            <Table size="small" className={props.classes.historyTable} aria-label={`${band.label.text} spike values`}>
+                            <Table size="small" className={`${props.classes.historyTable} ${props.classes.historyTwoColumnTable}`} aria-label={`${band.label.text} spike values`}>
                                 <TableHead>
                                     <TableRow>
                                         <TableCell>PM2.5 AQI</TableCell>
@@ -234,8 +234,8 @@ const SpikeTable: FC<Props> = props => {
     }).filter(({ groups: bandGroups }) => bandGroups.length > 0).reverse();
 
     return (
-        <TableContainer>
-            <Table size="small" className={props.classes.historyTable} aria-label="Spike occurrences by AQI band">
+        <TableContainer className={props.classes.historyTableContainer}>
+            <Table size="small" className={`${props.classes.historyTable} ${props.classes.historyTwoColumnTable}`} aria-label="Spike occurrences by AQI band">
                 <TableHead>
                     <TableRow>
                         <TableCell>AQI band</TableCell>

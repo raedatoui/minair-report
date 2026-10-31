@@ -1,4 +1,4 @@
-import React, { FC, useRef, useEffect, useState } from 'react';
+import React, { FC, useCallback, useRef, useEffect, useState } from 'react';
 import { uniq, filter, sortBy } from 'lodash';
 import Card from '@mui/material/Card';
 import CardActionArea from '@mui/material/CardActionArea';
@@ -24,6 +24,8 @@ interface FanImageProps extends StyledComponent {
 
 interface FanVideoProps extends StyledComponent {
     video: Media;
+    playing: boolean;
+    onPlayingChange: (playing: boolean) => void;
 }
 
 function shuffle<T>(array: T[]): T[] {
@@ -65,33 +67,45 @@ const FanImage: FC<FanImageProps> = ({ useWhite, image, classes }) => {
     );
 };
 
-const FanVideo: FC<FanVideoProps> = ({ useWhite, video, classes }) => {
-    const [liked, setLiked] = React.useState(false);
+const FanVideo: FC<FanVideoProps> = ({ useWhite, video, classes, playing, onPlayingChange }) => {
     const whiteBox = useWhite ? classes.whiteBox : '';
 
     const ref = useRef<HTMLVideoElement | null>(null);
-    useEffect(() => {
-        if (liked && screenfull.isEnabled)
-            // @ts-ignore
-            screenfull.request(document.getElementById(String(video.id)));
-    }, [liked, video]);
+    const setPlayerRef = useCallback((player: HTMLVideoElement | null) => {
+        ref.current = player;
+        // ReactPlayer 3 does not forward poster to its HTML video element.
+        if (player)
+            player.poster = `${CDN}${fansPath}${video.poster}`;
+    }, [video.poster]);
+
+    const togglePlayback = () => {
+        const nextPlaying = !playing;
+        onPlayingChange(nextPlaying);
+        if (nextPlaying && screenfull.isEnabled && ref.current) {
+            void screenfull.request(ref.current).catch(() => {
+                // Fullscreen may be denied; playback can continue inline.
+            });
+        }
+    };
 
     return (
         <Card className={`${classes.fanCard} ${whiteBox}`}>
-            <CardActionArea onClick={() => setLiked(!liked)}>
+            <CardActionArea onClick={togglePlayback}>
                 <ReactPlayer
                     id={String(video.id)}
-                    ref={ref}
+                    ref={setPlayerRef}
                     preload="none"
-                    poster={`${CDN}${fansPath}${video.poster}`}
                     src={`${CDN}${fansPath}${video.file}`}
-                    playing={liked}
+                    playing={playing}
+                    onPlay={() => onPlayingChange(true)}
+                    onPause={() => onPlayingChange(false)}
+                    onEnded={() => onPlayingChange(false)}
                     width="100%"
                 />
 
             </CardActionArea>
             <CardActions disableSpacing>
-                <IconButton onClick={() => setLiked(!liked)} aria-label="add to favorites" className={liked ? classes.fanLiked : ''}>
+                <IconButton onClick={togglePlayback} aria-label={playing ? 'Pause video' : 'Play video'} className={playing ? classes.fanLiked : ''}>
                     <FavoriteIcon />
                 </IconButton>
                 <IconButton aria-label="share">
@@ -110,6 +124,7 @@ const Fans: FC<ComponentProps> = ({ useWhite, classes }) => {
     const [authors, setAuthors] = useState<string[]>([]);
     const [currentAuthor, setCurrentAuthor] = useState<string>('All');
     const [order, setOrder] = useState<string>('Not Boring!');
+    const [playingVideoId, setPlayingVideoId] = useState<Media['id'] | null>(null);
 
     const [currentMedia, setCurrentMedia] = useState<Media[]>([]);
     const [toggleOrder, setToggleOrder] = useState<boolean>(false);
@@ -182,7 +197,16 @@ const Fans: FC<ComponentProps> = ({ useWhite, classes }) => {
             <div className={classes.fanMediaContainer}>
                 { currentMedia.map(v => {
                     if (v.type === 'video') return (
-                        <FanVideo useWhite={useWhite} video={v} key={v.id} classes={classes} />
+                        <FanVideo
+                            useWhite={useWhite}
+                            video={v}
+                            key={v.id}
+                            classes={classes}
+                            playing={playingVideoId === v.id}
+                            onPlayingChange={playing => setPlayingVideoId(current => (
+                                playing ? v.id : current === v.id ? null : current
+                            ))}
+                        />
                     );
                     if (v.type === 'image') return (
                         <FanImage useWhite={useWhite} image={v} key={v.id} classes={classes} />

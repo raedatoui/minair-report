@@ -1,4 +1,4 @@
-import { createTheme, Theme } from '@mui/material/styles';
+import { alpha, createTheme, Theme } from '@mui/material/styles';
 import { CSSObject } from '@emotion/react';
 
 const defaultTheme = createTheme();
@@ -33,7 +33,7 @@ export const mainTheme = createTheme({
     }
 });
 
-const aqiAlpha = 0.25;
+export const aqiAlpha = 0.25;
 const aqiAlpha2 = 0.5;
 const aqiAlpha3 = 0.35;
 
@@ -51,6 +51,8 @@ export const red = `rgba(255, 0, 0, ${aqiAlpha3})`;
 export const burgundy = `rgba(153, 0, 73, ${aqiAlpha3})`;
 export const purple = `rgba(126, 0, 35, ${aqiAlpha3})`;
 export const solidAqiColors = ['#00e000', '#ffff00', '#ff7600', '#ff0000', '#990049', '#7e0023'];
+export const historyAqiColors = solidAqiColors.map(color => alpha(color, 0.85));
+export const historySurfaceBackground = 'rgba(255, 255, 255, 0.85)';
 
 const purpleAirTransparent = `rgba(170, 68, 170, ${aqiAlpha2})`;
 
@@ -183,8 +185,8 @@ export const styles = (theme: Theme) => ({
         height: '100%'
     },
     card: {
-        width: '100%',
-        padding: theme.spacing(1),
+        // Keep the legacy 12px item gutters without overriding Grid's responsive width.
+        padding: theme.spacing(1.5),
         textAlign: 'center',
         color: theme.palette.text.secondary
     },
@@ -338,23 +340,77 @@ export const styles = (theme: Theme) => ({
         maxWidth: '100%'
     },
     historyPage: {
-        color: '#1b1b1b'
+        color: '#1b1b1b',
+        minWidth: 0,
+        [theme.breakpoints.down('sm')]: {
+            '& .minair-card': { padding: 8 },
+            '& .minair-currentContainer': { marginTop: 24 },
+            '& .minair-songRowCellButton.historyTitle': {
+                fontSize: 'clamp(2rem, 8.5vw, 2.75rem)',
+                lineHeight: 1.1,
+                letterSpacing: '0.08rem'
+            },
+            '& .MuiPagination-ul': { justifyContent: 'center', flexWrap: 'wrap' }
+        }
     },
     historyCard: {
-        background: 'linear-gradient(158deg, #ffbfff 0%, #bfffff 80%)',
+        background: candyGradient,
         color: '#1b1b1b',
-        height: '100%'
+        height: '100%',
+        '& h2': { textAlign: 'center' },
+        [theme.breakpoints.down('sm')]: { borderRadius: 28 }
+    },
+    historyStatContent: {
+        [theme.breakpoints.down('sm')]: {
+            padding: '16px 12px !important',
+            '& > h2': { fontSize: '0.875rem', lineHeight: 1.35, minHeight: '2.7em' },
+            '& > .MuiTypography-h2': {
+                fontSize: 'clamp(1.75rem, 8vw, 2.25rem)',
+                lineHeight: 1.2,
+                margin: '8px 0',
+                fontVariantNumeric: 'tabular-nums'
+            },
+            '& > .MuiTypography-body2': { fontSize: '0.8125rem', lineHeight: 1.4 }
+        }
     },
     historyContent: {
-        padding: '24px !important',
-        textAlign: 'left'
+        '--history-inset': '24px',
+        padding: 'var(--history-inset) !important',
+        textAlign: 'center',
+        [theme.breakpoints.down('sm')]: {
+            '--history-inset': '16px',
+            '& p, & summary': { fontSize: '0.875rem', lineHeight: 1.5 },
+            '& h2.MuiTypography-h4': { fontSize: '1.5rem', lineHeight: 1.25 },
+            '& h2.MuiTypography-h5': { fontSize: '1.375rem', lineHeight: 1.3 },
+            '& summary': { cursor: 'pointer', padding: '12px 0' },
+            '& .MuiButton-root': { minHeight: 44 },
+            '& .MuiButton-root:focus-visible, & summary:focus-visible': {
+                outline: `2px solid ${purpleAir}`,
+                outlineOffset: 2
+            }
+        }
+    },
+    historyActions: {
+        [theme.breakpoints.down('sm')]: {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 8,
+            '& .MuiButton-root': { width: '100%' }
+        }
     },
     historyControls: {
         display: 'flex',
         flexWrap: 'wrap',
         alignItems: 'center',
         gap: 12,
-        marginBottom: 16
+        marginBottom: 16,
+        [theme.breakpoints.down('sm')]: {
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+            '& .minair-historySelect': { minWidth: 0, width: '100%', margin: 0, left: 0, flexDirection: 'column' },
+            '& .minair-chartSelector': { minWidth: 0, marginRight: 0 },
+            '& > .MuiButton-root': { gridColumn: '1 / -1' }
+        }
     },
     historySelect: {
         left: 0,
@@ -368,8 +424,51 @@ export const styles = (theme: Theme) => ({
             }
         }
     },
+    historyChart: {
+        [theme.breakpoints.down('sm')]: {
+            width: 'calc(100% + var(--history-inset) + var(--history-inset))',
+            marginLeft: 'calc(-1 * var(--history-inset))',
+            marginRight: 'calc(-1 * var(--history-inset))'
+        }
+    },
+    historyTableContainer: {
+        '&:focus-visible': { outline: `2px solid ${purpleAir}`, outlineOffset: -2 },
+        [theme.breakpoints.down('sm')]: {
+            width: 'calc(100% + var(--history-inset) + var(--history-inset))',
+            marginLeft: 'calc(-1 * var(--history-inset))',
+            marginRight: 'calc(-1 * var(--history-inset))',
+            overscrollBehaviorX: 'contain'
+        }
+    },
+    historyTableHint: {
+        display: 'none',
+        [theme.breakpoints.down('sm')]: {
+            display: 'block',
+            margin: '8px 0',
+            fontSize: '0.8125rem'
+        }
+    },
+    historyWideTable: {
+        [theme.breakpoints.down('sm')]: {
+            minWidth: 680,
+            '& td:not(:first-child)': { whiteSpace: 'nowrap' }
+        }
+    },
+    historyTwoColumnTable: {
+        [theme.breakpoints.down('sm')]: {
+            tableLayout: 'fixed',
+            '& > thead > tr > :last-child, & > tbody > tr > :last-child:not([colspan])': {
+                width: '32%'
+            },
+            '& > tbody > tr > td:last-child:not([colspan])': { whiteSpace: 'nowrap' },
+            '& > tbody > tr > :first-child:not([colspan])': { overflowWrap: 'anywhere' }
+        }
+    },
+    historyDetailsCell: {
+        [theme.breakpoints.down('sm')]: { padding: '0 !important' }
+    },
     historyTable: {
-        backgroundColor: '#fff',
+        backgroundColor: historySurfaceBackground,
         color: '#1b1b1b',
         '& th, & td': {
             padding: '10px 8px',
@@ -378,15 +477,40 @@ export const styles = (theme: Theme) => ({
         '& th': {
             whiteSpace: 'nowrap',
             fontWeight: 700
+        },
+        [theme.breakpoints.down('sm')]: {
+            '& th, & td': {
+                padding: '12px',
+                fontSize: '0.875rem',
+                lineHeight: 1.4,
+                verticalAlign: 'middle',
+                fontVariantNumeric: 'tabular-nums'
+            },
+            '& th': { whiteSpace: 'normal', fontSize: '0.8125rem', overflowWrap: 'anywhere' }
         }
     },
     historySpikeRow: {
         cursor: 'pointer',
         '&:hover': {
             backgroundColor: '#eee'
+        },
+        [theme.breakpoints.down('sm')]: {
+            '& > th': { padding: '4px 12px' },
+            '& .MuiButton-root': {
+                width: '100%',
+                minWidth: 0,
+                padding: '8px 0',
+                justifyContent: 'flex-start',
+                textAlign: 'left',
+                whiteSpace: 'normal',
+                textTransform: 'none',
+                fontSize: '0.875rem',
+                lineHeight: 1.4
+            },
+            '& .MuiButton-startIcon': { marginLeft: 0, flexShrink: 0 }
         }
     },
-    historyCloud: {
+    historyLeaf: {
         display: 'inline-block',
         marginRight: 12,
         fontSize: 28,
@@ -484,7 +608,7 @@ export const styles = (theme: Theme) => ({
         }
     },
     backDrop: {
-        backgroundColor: purpleAir
+        backgroundColor: 'rgba(0, 0, 0, 0.5)'
     },
 
     songsContainer: {

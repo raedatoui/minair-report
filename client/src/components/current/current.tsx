@@ -67,7 +67,7 @@ const Current: FC<Props> = ({ useWhite, dataFrame, trendsFrame, classes }) => {
         <>
             { dataFrame
                 && (
-                    <Grid container spacing={3} className={`${classes.currentContainer} ${whiteBox}`}>
+                    <Grid container spacing={0} className={`${classes.currentContainer} ${whiteBox}`}>
                         <Typography variant="h3" component="h3" className={classes.timeStamp}>
                             { timestampToDate('%m/%d/%Y %I:%M:%S %p', dataFrame.timestamp) }
                         </Typography>

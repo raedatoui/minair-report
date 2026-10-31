@@ -1,6 +1,5 @@
 /* eslint-disable react/no-array-index-key -- Immutable exports preserve duplicate source rows as separate occurrences. */
 import React, { FC, useEffect, useState } from 'react';
-import Link from 'next/link';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -21,12 +20,14 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import Pagination from '@mui/material/Pagination';
+import { alpha } from '@mui/material/styles';
 import { historyDataPath } from '../../constants';
-import { solidAqiColors } from '../../styles';
+import { aqiAlpha, historyAqiColors, solidAqiColors } from '../../styles';
 import { StyledComponent } from '../../types';
 import { HistoryGraph } from '../trends/graph';
 import { ArchivePage, HistoryReport, Month, Reading } from './types';
 import SpikeTable from './spikes';
+import CannabisIcon from './cannabis-icon';
 
 const format = (value: number | null | undefined, digits = 1) => (
     value == null ? '—' : value.toLocaleString('en-US', { maximumFractionDigits: digits })
@@ -106,16 +107,9 @@ const History: FC<StyledComponent> = ({ classes }) => {
         return () => controller.abort();
     }, [showArchive, archivePage]);
 
-    const navigation = (
-        <Box sx={{ px: 3, pt: 3 }}>
-            <Button component={Link} href="/trends" className={classes.songRowCellButton}>Recent readings</Button>
-        </Box>
-    );
-
     if (!report)
         return (
             <div className={classes.historyPage}>
-                {navigation}
                 <Box sx={{ p: 3, textAlign: 'center' }}>
                     {error ? (
                         <>
@@ -177,29 +171,28 @@ const History: FC<StyledComponent> = ({ classes }) => {
 
     return (
         <div className={classes.historyPage}>
-            {navigation}
             <Box sx={{ px: 3, pt: 3, textAlign: 'center' }}>
                 <Typography
                     variant="h3"
                     component="h1"
                     className={`${classes.songRowCellButton} historyTitle`}
                 >
-                    Minair, over the years
+                    MINAIR, ALL TIME HIGHS
                 </Typography>
                 <Typography variant="h6" component="p">
                     {months.length > 0 && `${monthLabel(months[0].month)} – ${monthLabel(months[months.length - 1].month)}`}
                 </Typography>
                 <Typography>{format(totals.readings, 0)} readings across {format(totals.days_observed, 0)} observed days.</Typography>
             </Box>
-            <Grid container spacing={3} className={classes.currentContainer}>
+            <Grid container spacing={0} className={classes.currentContainer}>
                 {statCards.map(stat => (
-                    <Grid size={{ xs: 12, sm: 6, md: 3 }} className={classes.card} key={stat.label}>
+                    <Grid size={{ xs: 6, md: 3 }} className={classes.card} key={stat.label}>
                         <Card
                             variant="outlined"
                             className={`${classes.cardBubble} ${classes.historyCard}`}
-                            style={{ background: stat.color, color: stat.color === colors[4] || stat.color === colors[5] ? '#fff' : '#1b1b1b' }}
+                            style={{ background: stat.color ? alpha(stat.color, aqiAlpha) : undefined, color: stat.color === colors[4] || stat.color === colors[5] ? '#fff' : '#1b1b1b' }}
                         >
-                            <CardContent>
+                            <CardContent className={classes.historyStatContent}>
                                 <Typography variant="h6" component="h2">{stat.label}</Typography>
                                 <Typography variant="h2" component="p" className={classes.bold}>{format(stat.value)}</Typography>
                                 <Typography variant="body2">{stat.note}</Typography>
@@ -240,21 +233,24 @@ const History: FC<StyledComponent> = ({ classes }) => {
                                 </FormControl>
                                 {download('monthly.csv', 'Download monthly statistics')}
                             </Box>
-                            <HistoryGraph
-                                useWhite={false}
-                                months={visibleMonths.map(month => monthLabel(month.month))}
-                                averages={visibleMonths.map(month => metricValue(month, metric, 'mean'))}
-                                peaks={visibleMonths.map(month => metricValue(month, metric, 'max'))}
-                                unit={selected.unit}
-                                isAqi={metric.startsWith('aqi_')}
-                            />
+                            <Box className={classes.historyChart}>
+                                <HistoryGraph
+                                    useWhite={false}
+                                    months={visibleMonths.map(month => monthLabel(month.month))}
+                                    averages={visibleMonths.map(month => metricValue(month, metric, 'mean'))}
+                                    peaks={visibleMonths.map(month => metricValue(month, metric, 'max'))}
+                                    unit={selected.unit}
+                                    isAqi={metric.startsWith('aqi_')}
+                                />
+                            </Box>
                             <Typography variant="body2">
                                 Sample-weighted averages. Gaps are missing months; observed days do not imply full-day coverage.
                             </Typography>
                             <Box sx={{ mt: 2 }} component="details">
                                 <Typography component="summary">Monthly numbers · {selected.label} ({selected.unit})</Typography>
-                                <TableContainer>
-                                    <Table size="small" className={classes.historyTable} aria-label="Monthly statistics">
+                                <Typography className={classes.historyTableHint}>Swipe to see all columns.</Typography>
+                                <TableContainer className={classes.historyTableContainer} tabIndex={0} role="region" aria-label="Monthly statistics">
+                                    <Table size="small" className={`${classes.historyTable} ${classes.historyWideTable}`} aria-label="Monthly statistics">
                                         <TableHead>
                                             <TableRow>
                                                 <TableCell>Month</TableCell>
@@ -292,12 +288,12 @@ const History: FC<StyledComponent> = ({ classes }) => {
                         <CardContent className={classes.historyContent}>
                             <Typography variant="h5" component="h2" gutterBottom>How the air stacked up</Typography>
                             <Typography variant="body2">Share of valid PM2.5 AQI samples, all years.</Typography>
-                            <TableContainer>
-                                <Table size="small" className={classes.historyTable} aria-label="AQI category shares">
+                            <TableContainer className={classes.historyTableContainer}>
+                                <Table size="small" className={`${classes.historyTable} ${classes.historyTwoColumnTable}`} aria-label="AQI category shares">
                                     <TableBody>{categoryNames.map((name, index) => {
                                         const count = report.categories.find(item => item.band === index)?.readings ?? 0;
                                         return (
-                                            <TableRow key={name} style={{ backgroundColor: colors[index], color: index >= 4 ? '#fff' : '#1b1b1b' }}>
+                                            <TableRow key={name} style={{ backgroundColor: historyAqiColors[index], color: index >= 4 ? '#fff' : '#1b1b1b' }}>
                                                 <TableCell>{name}</TableCell>
                                                 <TableCell align="right">
                                                     {totals.aqi_2_5_count ? `${format((count / totals.aqi_2_5_count) * 100)}%` : '—'}
@@ -318,8 +314,9 @@ const History: FC<StyledComponent> = ({ classes }) => {
                     <Card variant="outlined" className={`${classes.cardBubble} ${classes.historyCard}`}>
                         <CardContent className={classes.historyContent}>
                             <Typography variant="h5" component="h2" gutterBottom>All-time averages</Typography>
-                            <TableContainer>
-                                <Table size="small" className={classes.historyTable} aria-label="All-time measurement statistics">
+                            <Typography className={classes.historyTableHint}>Swipe to see all columns.</Typography>
+                            <TableContainer className={classes.historyTableContainer} tabIndex={0} role="region" aria-label="All-time measurement statistics">
+                                <Table size="small" className={`${classes.historyTable} ${classes.historyWideTable}`} aria-label="All-time measurement statistics">
                                     <TableHead>
                                         <TableRow>
                                             <TableCell>Measurement</TableCell>
@@ -348,17 +345,15 @@ const History: FC<StyledComponent> = ({ classes }) => {
                 <Grid size={{ xs: 12 }} className={classes.card}>
                     <Card variant="outlined" className={`${classes.cardBubble} ${classes.historyCard}`}>
                         <CardContent className={classes.historyContent}>
-                            <Box component="details">
-                                <Typography variant="h4" component="summary">The big spikes</Typography>
-                                <Box sx={{ mt: 2 }}>
-                                    <Typography>
-                                        {format(totals.spike_readings, 0)} readings above {format(report.spike_threshold)} PM2.5 AQI.
-                                        {' '}Grouped by AQI band, all years.
-                                        {' '}Expand a band, then a value to see its readings.
-                                    </Typography>
-                                    {download('spikes.csv', 'Download every spike')}
-                                    <SpikeTable classes={classes} timezone={report.timezone} readingDate={readingDate} />
-                                </Box>
+                            <Typography variant="h3" component="h2" className={classes.bold} sx={{ fontSize: { xs: '2rem', sm: '3rem' } }}>The greatest hits</Typography>
+                            <Box sx={{ mt: 2 }}>
+                                <Typography>
+                                    {format(totals.spike_readings, 0)} readings above {format(report.spike_threshold)} PM2.5 AQI.
+                                    {' '}Grouped by AQI band, all years.
+                                    {' '}Expand a band, then a value to see its readings.
+                                </Typography>
+                                {download('spikes.csv', 'Download every spike')}
+                                <SpikeTable classes={classes} timezone={report.timezone} readingDate={readingDate} />
                             </Box>
                         </CardContent>
                     </Card>
@@ -367,21 +362,25 @@ const History: FC<StyledComponent> = ({ classes }) => {
                 <Grid size={{ xs: 12 }} className={classes.card}>
                     <Card variant="outlined" className={`${classes.cardBubble} ${classes.historyCard}`}>
                         <CardContent className={classes.historyContent}>
-                            <Typography variant="h3" component="h2" className={classes.bold}>The 420 club ☁</Typography>
+                            <Typography variant="h3" component="h2" className={classes.bold} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: { xs: 1, sm: 1.5 }, fontSize: { xs: '2rem', sm: '3rem' } }}>
+                                <span>The 420 club</span>
+                                <CannabisIcon fontSize="inherit" sx={{ flexShrink: 0 }} />
+                            </Typography>
                             <Typography variant="h6" component="p">
                                 {format(quality.total_420, 0)} very specific moments in atmospheric history.
                             </Typography>
                             <Typography>Exactly 420 in either AQI column. A reading matching both appears once.</Typography>
-                            <Box sx={{ my: 2 }}>
+                            <Box sx={{ my: 2 }} className={classes.historyActions}>
                                 {quality.total_420 > 0 && (
                                     <Button
-                                        color="inherit"
-                                        variant="outlined"
+                                        variant="contained"
+                                        sx={{ backgroundColor: '#2e7d32', color: '#fff', '&:hover': { backgroundColor: '#1b5e20' } }}
+                                        startIcon={<CannabisIcon sx={{ filter: 'brightness(0) invert(1)' }} />}
                                         onClick={() => setShowArchive(!showArchive)}
                                         aria-expanded={showArchive}
                                         aria-controls="history-420-archive"
                                     >
-                                        {showArchive ? 'Close the cloud' : 'Enter the cloud'}
+                                        {showArchive ? 'Close the club' : 'Enter the club'}
                                     </Button>
                                 )}
                                 {download('420.csv', 'Download every 420')}
@@ -390,39 +389,34 @@ const History: FC<StyledComponent> = ({ classes }) => {
                                 <div id="history-420-archive">
                                     {archiveError && (
                                         <Typography role="alert">
-                                            The archive could not be loaded. Close and reopen the cloud to try again.
+                                            The archive could not be loaded. Close and reopen the club to try again.
                                         </Typography>
                                     )}
                                     {!archive && !archiveError && <CircularProgress aria-label="Loading 420 archive" />}
                                     {archive && (
-                                        <TableContainer>
-                                            <Table size="small" className={classes.historyTable} aria-label="Every exact AQI 420 match">
+                                        <TableContainer className={classes.historyTableContainer}>
+                                            <Table size="small" className={`${classes.historyTable} ${classes.historyTwoColumnTable}`} aria-label="Every exact AQI 420 match">
                                                 <TableHead>
                                                     <TableRow>
                                                         <TableCell>Recorded at ({report.timezone})</TableCell>
-                                                        <TableCell>ID</TableCell>
                                                         <TableCell align="right">PM2.5 AQI</TableCell>
-                                                        <TableCell align="right">PM10 AQI</TableCell>
-                                                        <TableCell align="right">A small tribute</TableCell>
                                                     </TableRow>
                                                 </TableHead>
                                                 <TableBody>{archive.rows.map((reading, index) => (
                                                     <TableRow key={`${reading.id}-${index}`}>
                                                         <TableCell>{readingDate(reading)}</TableCell>
-                                                        <TableCell>{reading.id ?? '—'}</TableCell>
-                                                        <TableCell align="right">{format(reading.aqi_2_5)}</TableCell>
-                                                        <TableCell align="right">{format(reading.aqi_10_0)}</TableCell>
                                                         <TableCell align="right">
                                                             <Button
                                                                 color="inherit"
                                                                 variant="outlined"
+                                                                endIcon={<CannabisIcon sx={{ color: '#2e7d32' }} />}
                                                                 aria-label={`Celebrate reading ${reading.id ?? index + 1}`}
                                                                 onClick={() => setCelebration({
-                                                                    message: `420. A legendary puff. ${readingDate(reading)}`,
+                                                                    message: `420. A legendary puffair. ${readingDate(reading)}`,
                                                                     key: Date.now()
                                                                 })}
                                                             >
-                                                                420 ☁
+                                                                {format(reading.aqi_2_5)}
                                                             </Button>
                                                         </TableCell>
                                                     </TableRow>
@@ -473,8 +467,8 @@ const History: FC<StyledComponent> = ({ classes }) => {
                                         Spike readings are individual samples, not separate pollution episodes.
                                     </Typography>
                                 </Box>
-                                <TableContainer>
-                                    <Table size="small" className={classes.historyTable} aria-label="Missing and invalid measurements">
+                                <TableContainer className={classes.historyTableContainer}>
+                                    <Table size="small" className={`${classes.historyTable} ${classes.historyTwoColumnTable}`} aria-label="Missing and invalid measurements">
                                         <TableHead>
                                             <TableRow>
                                                 <TableCell>Measurement</TableCell>
@@ -496,11 +490,17 @@ const History: FC<StyledComponent> = ({ classes }) => {
                     </Card>
                 </Grid>
             </Grid>
-            <Snackbar key={celebration?.key} open={celebration !== null} autoHideDuration={4200} onClose={() => setCelebration(null)}>
+            <Snackbar
+                key={celebration?.key}
+                open={celebration !== null}
+                autoHideDuration={4200}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                onClose={() => setCelebration(null)}
+            >
                 <SnackbarContent
                     className={classes.historyToast}
                     message={(
-                        <><span className={classes.historyCloud} aria-hidden="true">☁</span>{celebration?.message}</>
+                        <><CannabisIcon className={classes.historyLeaf} />{celebration?.message}</>
                     )}
                 />
             </Snackbar>

@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Avatar from '@mui/material/Avatar';
 import { CDN, audio as audioPath, menu as menuPath } from '../../constants';
 import { StyledComponent, Song } from '../../types';
@@ -18,6 +18,8 @@ interface Props extends StyledComponent {
 
 const Menu: FC<Props> = ({ currentIndex, play, songs, classes }) => {
     const router = useRouter();
+    const pathname = usePathname();
+    const isTrends = pathname === '/trends' || pathname === '/trends/';
     const matches = useMediaQuery('(min-width:1024px)');
     const xmatches = useMediaQuery('(min-width:1280px)');
     const [value, setValue] = useState(0);
@@ -141,13 +143,15 @@ const Menu: FC<Props> = ({ currentIndex, play, songs, classes }) => {
                     )}
                 />
                 <BottomNavigationAction
-                    onClick={() => navigate('trends')}
+                    onClick={() => navigate(isTrends ? 'all-time' : 'trends')}
+                    aria-label={isTrends ? 'All-time highs' : 'Trends'}
                     label=""
                     className={classes.menuItem}
                     icon={(
                         <Avatar
                             className={clsx(classes.menuIcon, { large: matches, xlarge: xmatches })}
-                            src={`${CDN}${menuPath}trends.png`}
+                            src={isTrends ? '/images/all-time.png' : `${CDN}${menuPath}trends.png`}
+                            alt={isTrends ? 'All-time highs' : 'Trends'}
                             variant="square"
                         />
                     )}

@@ -120,7 +120,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
                 {showHeader ? (
                     <>
                         <div className="app">
-                            <AppBar className={classes.appHeader} position="relative">
+                            <AppBar className={classes.appHeader} position="relative" elevation={0}>
                                 <Toolbar className={classes.toolBar}>
                                     <img src={`${CDN}${logo}logo-text.png`} alt="logo" className={classes.logo} />
                                     <img src={`${CDN}${logo}logo-heart.gif`} alt="logo" className={classes.logo2} />

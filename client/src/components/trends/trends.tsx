@@ -6,8 +6,6 @@ import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Link from 'next/link';
 import { DataFrame, ComponentProps, chartCategories } from '../../types';
 import { fetchData } from '../../utils';
 import { Graph } from './graph';
@@ -88,11 +86,6 @@ const Charts:FC<Props> = ({ currentDataFrame, useWhite, classes }) => {
 
     return (
         <div className={classes.chartsContainer}>
-            <Box sx={{ px: 3, pb: 2 }}>
-                <Button component={Link} href="/history" className={classes.songRowCellButton}>
-                    All-time report
-                </Button>
-            </Box>
             <Box>
                 <FormControl variant="filled" className={classes.formControl}>
                     <InputLabel className={classes.chartSelector}>Parameter</InputLabel>
